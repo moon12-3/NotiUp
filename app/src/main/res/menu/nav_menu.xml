@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/article_month"
+        android:icon="@drawable/month"
+        android:title="MONTH" />
+    <item
+        android:id="@+id/article_alarm"
+        android:icon="@drawable/alarm"
+        android:title="ALARM" />
+    <item
+        android:id="@+id/article_my"
+        android:icon="@drawable/alarm"
+        android:title="MY PAGE" />
+
+
+</menu>

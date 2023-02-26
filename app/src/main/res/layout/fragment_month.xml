@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:scrollbars="vertical"
+    android:isScrollContainer="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#272727"
+        tools:context=".MonthFragment">
+        <TextView
+            android:text="2023년 1월"
+            android:textStyle="bold"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="10dp"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:layout_marginTop="20dp"
+            android:background="@color/back"
+            android:id="@+id/material_calendar"
+            app:mcv_selectionColor="#FFE7FE54"
+            app:mcv_weekDayTextAppearance="@style/TextStyleSemiBold15"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_container"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"/>
+
+    </LinearLayout>
+</ScrollView>

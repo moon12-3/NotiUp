@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#393838"
+    android:padding="10dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp">
+    <ImageView
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/stick"/>
+    <TextView
+        android:id="@+id/voca_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="여기에 알람 이름이 뜹니다."
+        android:textColor="#70ffffff"
+        android:layout_marginLeft="10dp"
+        android:textSize="20sp"
+        />
+</LinearLayout>

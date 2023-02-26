@@ -3,9 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+
+
 android {
     namespace 'com.example.notiup'
-    compileSdk 32
+    compileSdk 33
+
+    buildFeatures {
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId "com.example.notiup"
@@ -31,9 +37,8 @@ android {
         jvmTarget = '1.8'
     }
 }
-
 dependencies {
-
+    implementation 'com.github.prolificinteractive:material-calendarview:1.4.3'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
