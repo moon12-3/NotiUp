@@ -58,11 +58,12 @@
             android:id="@+id/imageView"
             android:layout_width="5dp"
             android:layout_height="5dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toStartOf="@+id/alarm_switch"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/tv_time"
-            app:srcCompat="@drawable/color_circle"
-            tools:layout_editor_absoluteY="16dp" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/color_circle" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

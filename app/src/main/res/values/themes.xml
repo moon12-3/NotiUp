@@ -13,10 +13,18 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="floatingActionButtonStyle">@style/FabShapeStyle</item>
     </style>
     <style name="TextStyleSemiBold15">
         <item name="android:textColor">#FFF7F7F7</item>
         <item name="android:weekNumberColor">#FFF7F7F7</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/FabShapeStyle</item>
+    </style>
+    <style name="FabShapeStyle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">20%</item>
     </style>
 
 </resources>
