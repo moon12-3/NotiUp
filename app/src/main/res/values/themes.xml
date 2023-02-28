@@ -7,13 +7,13 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="windowNoTitle">true</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">#474747</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="floatingActionButtonStyle">@style/FabShapeStyle</item>
+        <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
     </style>
     <style name="TextStyleSemiBold15">
         <item name="android:textColor">#FFF7F7F7</item>
@@ -24,7 +24,7 @@
         <item name="shapeAppearanceOverlay">@style/FabShapeStyle</item>
     </style>
     <style name="FabShapeStyle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">20%</item>
+        <item name="cornerSize">30%</item>
     </style>
 
 </resources>
