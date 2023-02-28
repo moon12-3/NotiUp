@@ -89,5 +89,11 @@
         app:fabCustomSize="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <ImageView
+        android:layout_gravity="bottom"
+        android:scaleType = "fitXY"
+        android:src="@drawable/gradation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="55dp"/>
 </FrameLayout>

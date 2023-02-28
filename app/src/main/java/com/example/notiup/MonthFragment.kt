@@ -13,6 +13,7 @@ import com.google.android.material.card.MaterialCardView
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,8 +31,15 @@ class MonthFragment : Fragment() {
 
         binding = FragmentMonthBinding.bind(view)
 
+        val year = Calendar.getInstance().get(Calendar.YEAR).toString()
+
+        val a = arrayListOf<String>()
+
+        for(i in 1 .. 12) a.add("$year ${i}월")
+
         binding.materialCalendar.apply {
             setWeekDayLabels(arrayOf("월", "화", "수", "목", "금", "토", "일"))
+            setTitleFormatter(MonthArrayTitleFormatter(resources.getTextArray(R.array.custom_months)))
         }
         binding.materialCalendar.selectedDate = CalendarDay.today()
 

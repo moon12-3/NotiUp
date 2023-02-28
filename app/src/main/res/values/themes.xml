@@ -26,5 +26,9 @@
     <style name="FabShapeStyle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerSize">30%</item>
     </style>
-
+    <!-- 달력 안의 숫자들에 적용되는 스타일 -->
+    <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:weekNumberColor">@android:color/holo_red_light</item>
+    </style>
 </resources>
