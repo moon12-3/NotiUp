@@ -1,15 +1,25 @@
 package com.example.notiup
 
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.text.style.ForegroundColorSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.FragmentMonthBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -21,7 +31,15 @@ import kotlin.collections.HashSet
 
 class MonthFragment : Fragment() {
 
+    lateinit var mainActivity : MainActivity
+
     lateinit var binding : FragmentMonthBinding
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        mainActivity = context as MainActivity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,16 +49,19 @@ class MonthFragment : Fragment() {
 
         binding = FragmentMonthBinding.bind(view)
 
-        val year = Calendar.getInstance().get(Calendar.YEAR).toString()
-
-        val a = arrayListOf<String>()
-
-        for(i in 1 .. 12) a.add("$year ${i}월")
-
         binding.materialCalendar.apply {
-            setWeekDayLabels(arrayOf("월", "화", "수", "목", "금", "토", "일"))
+            setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))
             setTitleFormatter(MonthArrayTitleFormatter(resources.getTextArray(R.array.custom_months)))
+            addDecorator(WeekdayDecorator())
+            setHeaderTextAppearance(R.style.CalendarWidgetHeader)
+            setTopbarVisible(false)
         }
+
+        val dateRangePicker =
+            MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText("Select dates")
+                .build()
+
         binding.materialCalendar.selectedDate = CalendarDay.today()
 
         //recyclerView 내용
@@ -53,35 +74,38 @@ class MonthFragment : Fragment() {
         recyclerView.adapter = MonthAlarmAdapter(dataList)
         recyclerView.setHasFixedSize(true)
 
+        // bottom sheet 내용
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+
+//        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+//            override fun onStateChanged(bottomSheet: View, newState: Int) {
+//                if(newState == STATE_EXPANDED) {
+//
+//                }
+//            }
+//
+//            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//
+//            }
+//
+//        })
+
         return view
     }
 
-    inner class MyTitleFormatter : TitleFormatter {
-        override fun format(day: CalendarDay?): CharSequence {
-            val simpleDateFormat =
-                SimpleDateFormat("yyyy.MM", Locale.US) //"February 2016" format
+    inner class WeekdayDecorator : DayViewDecorator {
 
-            return simpleDateFormat.format(Calendar.getInstance().getTime())
-        }
+        private val calendar = Calendar.getInstance()
 
-    }
-
-    inner class DayDisableDecorator : DayViewDecorator {
-        private var dates = HashSet<CalendarDay>()
-        private var today: CalendarDay
-
-        constructor(dates: HashSet<CalendarDay>, today: CalendarDay) {
-            this.dates = dates
-            this.today = today
-        }
-
-        override fun shouldDecorate(day: CalendarDay): Boolean {
-            // 휴무일 || 이전 날짜
-            return dates.contains(day) || day.isBefore(today)
+        override fun shouldDecorate(day: CalendarDay?): Boolean {
+            day!!.copyTo(calendar)
+            val weekDay = calendar.get(Calendar.DAY_OF_WEEK)
+            return (weekDay == Calendar.SATURDAY) || (weekDay == Calendar.SUNDAY)
         }
 
         override fun decorate(view: DayViewFacade?) {
-            view?.let { it.setDaysDisabled(true) }
+            view!!.addSpan(ForegroundColorSpan(Color.parseColor("#CF6262")))
         }
+
     }
 }

@@ -1,53 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ScrollView
-        android:scrollbars="vertical"
-        android:isScrollContainer="false"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:animateLayoutChanges="true">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#272727"
-            tools:context=".MonthFragment">
-            <TextView
-                android:text="2023년 1월"
-                android:textStyle="bold"
-                android:layout_marginTop="60dp"
-                android:layout_marginLeft="10dp"
-                android:textSize="30sp"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                android:layout_marginTop="20dp"
-                android:background="@color/back"
-                android:id="@+id/material_calendar"
-                app:mcv_selectionColor="#FFE7FE54"
-                app:mcv_weekDayTextAppearance="@style/TextStyleSemiBold15"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"/>
+            android:isScrollContainer="false"
+            android:scrollbars="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_container"
-                android:layout_marginTop="10dp"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="60dp"/>
+                android:layout_height="match_parent"
+                android:background="#272727"
+                android:orientation="vertical"
+                tools:context=".MonthFragment">
 
-        </LinearLayout>
-    </ScrollView>
-    <ImageView
-        android:layout_gravity="bottom"
-        android:scaleType = "fitXY"
-        android:src="@drawable/gradation"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="90dp"
+                    android:text="2023년 1월"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    android:layout_marginTop="20dp"
+                    android:background="@color/back"
+                    android:id="@+id/material_calendar"
+
+                    app:mcv_selectionColor="#FFE7FE54"
+                    app:mcv_weekDayTextAppearance="@style/TextStyleSemiBold15"
+                    app:mcv_dateTextAppearance="@style/CalenderViewDateCustomText"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="60dp"
+                    android:scrollbars="none" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_filter"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#474747"
+            android:src="@drawable/s"
+            app:fabCustomSize="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_edit"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#474747"
+            android:src="@drawable/fab_edit"
+            app:fabCustomSize="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="55dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/gradation" />
+    </FrameLayout>
+
+    <!-- Bottom sheet -->
+
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="55dp"/>
-</FrameLayout>
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        app:cardBackgroundColor="#393838"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:cardCornerRadius="36dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

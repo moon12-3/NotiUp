@@ -39,6 +39,13 @@ android {
 }
 dependencies {
     implementation 'com.github.prolificinteractive:material-calendarview:1.4.3'
+
+    implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
+
+    implementation 'com.google.android.material:material:1.4.0-alpha01'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:27.1.1'
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
