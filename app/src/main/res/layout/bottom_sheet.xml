@@ -1,35 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
-    android:background="#ffffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    app:cardBackgroundColor="#393838"
     android:orientation="vertical"
-    app:layout_behavior="@string/bottom_sheet_behavior"
+    android:padding="10dp"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="300dp"
+    app:behavior_peekHeight="0dp"
+
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     >
 
-    <Button
-        android:id="@+id/button"
+    <LinearLayout
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="버튼 1" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#E7FE54"
+            android:textSize="20sp"
+            android:text="취소"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="300dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:text="알람 설정하기"
+            android:layout_marginLeft="110dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#E7FE54"
+            android:textSize="20sp"
+            android:text="저장"
+            android:layout_marginLeft="100dp"/>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="버튼 2" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="버튼 3" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

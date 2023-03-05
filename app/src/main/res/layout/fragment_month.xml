@@ -38,12 +38,12 @@
                     android:layout_marginTop="20dp"
                     android:background="@color/back"
                     android:id="@+id/material_calendar"
-
+                    android:paddingTop="20dp"
                     app:mcv_selectionColor="#FFE7FE54"
                     app:mcv_weekDayTextAppearance="@style/TextStyleSemiBold15"
                     app:mcv_dateTextAppearance="@style/CalenderViewDateCustomText"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"/>
+                    android:layout_height="330dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/fragment_container"
@@ -105,15 +105,37 @@
         android:padding="10dp"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
-        app:cardCornerRadius="36dp"
+        app:cardCornerRadius="30dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
 
         <LinearLayout
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E7FE54"
+                android:textSize="20sp"
+                android:text="취소"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="300dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:text="알람 설정하기"
+                android:layout_marginLeft="110dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E7FE54"
+                android:textSize="20sp"
+                android:text="저장"
+                android:layout_marginLeft="100dp"/>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

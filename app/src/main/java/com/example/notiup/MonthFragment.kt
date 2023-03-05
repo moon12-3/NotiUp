@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -75,20 +76,12 @@ class MonthFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
 
         // bottom sheet 내용
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
-
-//        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-//            override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                if(newState == STATE_EXPANDED) {
-//
-//                }
-//            }
-//
-//            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//
-//            }
-//
-//        })
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
+        val bottomSheetDialog = BottomSheetDialog(mainActivity)
+        bottomSheetDialog.setContentView(bottomSheetView)
+        binding.fabEdit.setOnClickListener {
+            bottomSheetDialog.show()
+        }
 
         return view
     }
