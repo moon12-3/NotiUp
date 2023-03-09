@@ -17,6 +17,11 @@ class MonthAlarmAdapter(val dataList : MutableList<String>) : RecyclerView.Adapt
         return ItemViewHolder(view)
     }
 
+    fun removeData(position: Int) {
+        dataList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val text = dataList[position]
     }
