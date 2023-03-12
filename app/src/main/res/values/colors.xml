@@ -8,4 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="back">#FF313131</color>
+
+    <drawable name="bg_color">#333232</drawable>
+    <drawable name="bg_white">#444444</drawable>
 </resources>

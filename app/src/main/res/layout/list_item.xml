@@ -10,7 +10,10 @@
         android:layout_height="100dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
-        android:background="#333232"
+        android:clickable="true"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:background="@drawable/bg_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -64,7 +67,6 @@
             app:layout_constraintStart_toEndOf="@+id/tv_time"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/color_circle" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
