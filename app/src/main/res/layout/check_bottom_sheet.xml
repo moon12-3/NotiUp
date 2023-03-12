@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/back">
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="50dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cancel"
+            android:textColor="#E7FE54"
+            android:textSize="20sp"
+            android:text="취소"
+            android:layout_marginLeft="25dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:text="정렬 기준"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="105dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#E7FE54"
+            android:textSize="20sp"
+            android:text="저장"
+            android:layout_marginLeft="100dp"/>
+    </LinearLayout>
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp">
+
+        <RadioButton
+            android:id="@+id/today"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="오늘 알람 보기"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+
+        <RadioButton
+            android:text="전체 알람 보기"
+            android:id="@+id/all"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/rect3"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="400dp">
+
+        <RadioButton
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="시간 내림차순"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+        <RadioButton
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect2"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="시간 오름차순"
+            android:textColor="@color/white"
+            android:layout_marginTop="2dp"
+            android:textSize="16dp"/>
+        <RadioButton
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect2"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="날짜 내림차순"
+            android:textColor="@color/white"
+            android:layout_marginTop="2dp"
+            android:textSize="16dp"/>
+        <RadioButton
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect2"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="날짜 오름차순"
+            android:textColor="@color/white"
+            android:layout_marginTop="2dp"
+            android:textSize="16dp"/>
+        <RadioButton
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/rect3"
+            android:button="@null"
+            android:drawableRight="@drawable/notcheck"
+            android:text="태그 순"
+            android:textColor="@color/white"
+            android:layout_marginTop="2dp"
+            android:textSize="16dp"/>
+
+
+    </RadioGroup>
+
+</LinearLayout>

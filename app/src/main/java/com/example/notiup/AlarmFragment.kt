@@ -1,11 +1,13 @@
 package com.example.notiup
 
 import android.content.ClipData.Item
+import android.content.Context
 import android.graphics.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -13,20 +15,45 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.ActivityMainBinding
 import com.example.notiup.databinding.FragmentAlarmBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import org.w3c.dom.Text
 
 
 class AlarmFragment : Fragment() {
+
+    lateinit var mainActivity : MainActivity
 
     // 데이터 리스트
     private var alarm = ArrayList<Alarms>()
     // 어댑터
     private var rvAdapter = AlarmAdapter()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        mainActivity = context as MainActivity
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_alarm, container, false)
+        val binding = FragmentAlarmBinding.bind(view)
+
+        // bottom view
+        val bottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
+        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+        bottomSheetDialog.setContentView(bottomSheetView)
+        binding.fabFilter.setOnClickListener {
+            bottomSheetDialog.show()
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_alarm)
 
