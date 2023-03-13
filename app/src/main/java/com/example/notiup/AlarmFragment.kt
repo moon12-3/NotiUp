@@ -48,15 +48,12 @@ class AlarmFragment : Fragment() {
 
             }
 
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
+            // 꾹 눌러 이동할 수 없도록 함
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
+
+            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val itemView = viewHolder.itemView
                     val itemHeight = itemView.height
@@ -80,22 +77,14 @@ class AlarmFragment : Fragment() {
                         textPaint.color = Color.WHITE
                         textPaint.textSize = 52f
                         val textWidth = textPaint.measureText(text)
-                        val textX = (itemView.right - textWidth - 40)
 //                        val textX = dX + textPadding
+                        val textX = (itemView.right - textWidth - 40)
                         val textY = (itemView.top + itemHeight / 2 + textPaint.textSize / 2 - 8).toFloat()
                         c.drawText(text, textX, textY, textPaint)
 
                     }
                 }
-                super.onChildDraw(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         }
 

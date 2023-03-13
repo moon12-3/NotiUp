@@ -7,13 +7,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
-        android:clickable="true"
-        android:focusableInTouchMode="true"
-        android:focusable="true"
-        android:background="@drawable/bg_selector"
+        android:background="#333232"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -26,23 +23,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="28dp"
             android:text="08 : 30"
             android:textColor="#FFFFFF"
-            android:textSize="37sp"
+            android:textSize="35sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/alarm_switch"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_time"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/color_circle" />
 
         <TextView
             android:id="@+id/tv_alarm_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginBottom="16dp"
             android:text="여기에 알람 문구가 뜹니다."
             android:textColor="#73FFFFFF"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Switch
             android:id="@+id/alarm_switch"
@@ -57,16 +65,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="5dp"
-            android:layout_height="5dp"
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/alarm_switch"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/tv_time"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/color_circle" />
+            android:text="0000.00.00"
+            android:textColor="#40FFFFFF"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

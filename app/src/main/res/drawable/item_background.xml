@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    <item android:state_pressed="true" android:drawable="@drawable/item_background_pressed" />-->
+<!--    <item android:state_focused="true" android:drawable="@drawable/item_background_focused" />-->
+<!--    <item android:state_hovered="true" android:drawable="@drawable/item_background_hovered" />-->
+<!--    <item android:drawable="@drawable/item_background_normal" />-->
+</selector>
