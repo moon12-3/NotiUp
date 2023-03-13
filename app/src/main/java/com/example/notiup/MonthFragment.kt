@@ -82,10 +82,14 @@ class MonthFragment : Fragment() {
 
         // bottom sheet 내용
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-        val bottomSheetDialog = BottomSheetDialog(mainActivity)
+        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
         bottomSheetDialog.setContentView(bottomSheetView)
         binding.fabEdit.setOnClickListener {
             bottomSheetDialog.show()
+        }
+
+        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
