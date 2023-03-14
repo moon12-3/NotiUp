@@ -109,6 +109,11 @@ class MonthFragment : Fragment() {
 
             }
 
+            // 꾹 눌러 이동할 수 없도록 함
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
+
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
