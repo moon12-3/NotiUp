@@ -16,6 +16,8 @@
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
     </style>
     <style name="TextStyleSemiBold15">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16dp</item>
         <item name="android:textColor">#FFF7F7F7</item>
         <item name="android:weekNumberColor">#FFF7F7F7</item>
     </style>
@@ -53,8 +55,9 @@
 
     <!-- 연, 월을 표시하는 헤더에 적용되는 스타일 -->
     <style name="CalendarWidgetHeader">
-        <item name="android:textSize">0sp</item>
-        <item name="android:actionBarSize">0dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:actionBarSize">10dp</item>
+        <item name="buttonIconTint">#FFF</item>
         <item name="android:textColor">#FFFFFFFF</item>
     </style>
 
@@ -81,5 +84,7 @@
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="background">@android:color/transparent</item>
     </style>
+
+
 
 </resources>

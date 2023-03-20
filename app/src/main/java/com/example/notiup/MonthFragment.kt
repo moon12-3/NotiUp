@@ -27,6 +27,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import java.text.SimpleDateFormat
@@ -86,6 +87,19 @@ class MonthFragment : Fragment() {
         bottomSheetDialog.setContentView(bottomSheetView)
         binding.fabEdit.setOnClickListener {
             bottomSheetDialog.show()
+            bottomSheetDialog.behavior.state = STATE_EXPANDED
+        }
+        val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
+        val startCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.start_cal)
+        startDay.setOnClickListener {
+            if(startCal.visibility==View.GONE) {
+                startDay.setTextColor(Color.parseColor("#E7FE54"));
+                startCal.visibility = View.VISIBLE
+            }
+            else {
+                startDay.setTextColor(Color.parseColor("#ccFFFFFF"));
+                startCal.visibility = View.GONE
+            }
         }
 
         bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
