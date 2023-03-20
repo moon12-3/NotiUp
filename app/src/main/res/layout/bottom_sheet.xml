@@ -115,6 +115,7 @@
             android:textColor="@color/white"
             android:textSize="16dp"/>
         <TextView
+            android:id="@+id/end_day"
             android:layout_width="110dp"
             android:layout_height="30dp"
             android:layout_gravity="center"
@@ -137,7 +138,24 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/rect4"/>
     </LinearLayout>
-
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="1dp"
+        android:background="#55727272"
+        android:id="@+id/end_cal"
+        android:visibility="gone"
+        app:mcv_tileWidth="match_parent"
+        app:mcv_tileHeight="match_parent"
+        android:textFontWeight="@integer/material_motion_duration_long_1"
+        android:paddingTop="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:mcv_selectionColor="#FFE7FE54"
+        app:mcv_headerTextAppearance="@style/CalendarWidgetHeader"
+        app:mcv_weekDayTextAppearance="@style/TextStyleSemiBold15"
+        app:mcv_dateTextAppearance="@style/CalenderViewDateCustomText"
+        android:layout_width="390dp"
+        android:layout_height="300dp"/>
     <LinearLayout
         android:layout_marginTop="1dp"
         android:layout_width="390dp"

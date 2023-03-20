@@ -91,14 +91,33 @@ class MonthFragment : Fragment() {
         }
         val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
         val startCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.start_cal)
+
+        val endDay = bottomSheetView.findViewById<TextView>(R.id.end_day)
+        val endCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.end_cal)
+
         startDay.setOnClickListener {
             if(startCal.visibility==View.GONE) {
+                endDay.setTextColor(Color.parseColor("#ccFFFFFF"));
                 startDay.setTextColor(Color.parseColor("#E7FE54"));
+                endCal.visibility = View.GONE
                 startCal.visibility = View.VISIBLE
             }
             else {
                 startDay.setTextColor(Color.parseColor("#ccFFFFFF"));
                 startCal.visibility = View.GONE
+            }
+        }
+
+        endDay.setOnClickListener {
+            if(endCal.visibility==View.GONE) {
+                startDay.setTextColor(Color.parseColor("#ccFFFFFF"));
+                endDay.setTextColor(Color.parseColor("#E7FE54"));
+                startCal.visibility = View.GONE
+                endCal.visibility = View.VISIBLE
+            }
+            else {
+                endDay.setTextColor(Color.parseColor("#ccFFFFFF"));
+                endCal.visibility = View.GONE
             }
         }
 
