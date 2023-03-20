@@ -26,8 +26,7 @@
             android:textColor="#E7FE54"
             android:textSize="20sp"
             android:text="취소"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="300dp"/>
+            android:layout_marginLeft="15dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,5 +42,76 @@
             android:text="저장"
             android:layout_marginLeft="100dp"/>
     </LinearLayout>
-
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rect">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="시작"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="2dp"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rect2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="종료"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="1dp"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rect3">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="반복"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
+    <TextView
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="알람 태그 설정"
+        android:textStyle="bold"
+        android:textColor="#50FFFFFF"
+        android:layout_marginLeft="10dp"
+        android:textSize="10sp"/>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rect4">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="#과제"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
 </LinearLayout>
