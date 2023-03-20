@@ -51,7 +51,7 @@
             android:paddingRight="20dp"
             android:background="@drawable/rect"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@/selector_checked"
             android:text="오늘 알람 보기"
             android:textColor="@color/white"
             android:textSize="16dp"/>

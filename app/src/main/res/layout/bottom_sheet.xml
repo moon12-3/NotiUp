@@ -139,6 +139,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/repeat"
         android:layout_marginTop="1dp"
         android:layout_width="390dp"
         android:layout_height="wrap_content"
@@ -153,7 +154,22 @@
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:textSize="16dp"/>
+
+        <ImageView
+            android:layout_width="8dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="310dp"
+            android:layout_gravity="center"
+            android:background="@drawable/right_arrow"/>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:entries="@array/my_array"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"/>
     </LinearLayout>
+
     <TextView
         android:layout_marginTop="40dp"
         android:layout_width="match_parent"
@@ -177,5 +193,11 @@
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:textSize="16dp"/>
+        <ImageView
+            android:layout_width="8dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="300dp"
+            android:layout_gravity="center"
+            android:background="@drawable/right_arrow"/>
     </LinearLayout>
 </LinearLayout>
