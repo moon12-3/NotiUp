@@ -163,6 +163,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/rect3">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -173,19 +174,16 @@
             android:textColor="@color/white"
             android:textSize="16dp"/>
 
-        <ImageView
-            android:layout_width="8dp"
-            android:layout_height="15dp"
-            android:layout_marginLeft="310dp"
-            android:layout_gravity="center"
-            android:background="@drawable/right_arrow"/>
-
+<!--        android:dropDownVerticalOffset="200dp"-->
         <Spinner
             android:id="@+id/spinner"
             android:entries="@array/my_array"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"/>
+            android:layout_width="8dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="310dp"
+            android:popupBackground="@drawable/dropdown_list_rect"
+            android:background="@drawable/right_arrow"/>
     </LinearLayout>
 
     <TextView
