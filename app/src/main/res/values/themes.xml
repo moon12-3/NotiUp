@@ -39,6 +39,22 @@
         <item name="android:dateTextAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
+    <!--시간 스타일-->
+    <style name="AppTheme2" parent="Theme.MaterialComponents.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#00474747</item>
+        <item name="colorPrimaryDark">#00474747</item>
+        <item name="colorAccent">#00474747</item>
+    </style>
+
+    <style name="NumberPickerTheme" parent="AppTheme">
+        <!-- NumberPicker divider color -->
+        <item name="colorControlNormal">@android:color/transparent</item>
+        <item name="android:textColorPrimary">#FFF</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
     <!-- 달력 안의 숫자들에 적용되는 스타일 -->
     <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">
         <item name="android:textColor">#FFFFFFFF</item>
@@ -60,6 +76,8 @@
         <item name="buttonIconTint">#FFF</item>
         <item name="android:textColor">#FFFFFFFF</item>
     </style>
+
+
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         ......
