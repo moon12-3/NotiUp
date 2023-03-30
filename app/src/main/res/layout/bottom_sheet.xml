@@ -176,13 +176,11 @@
 
 <!--        android:dropDownVerticalOffset="200dp"-->
         <Spinner
-            android:id="@+id/spinner"
-            android:entries="@array/my_array"
+            android:id="@+id/custom_spinner"
             android:layout_width="8dp"
             android:layout_height="15dp"
             android:layout_gravity="center"
             android:layout_marginLeft="310dp"
-            android:popupBackground="@drawable/dropdown_list_rect"
             android:background="@drawable/right_arrow"/>
     </LinearLayout>
 

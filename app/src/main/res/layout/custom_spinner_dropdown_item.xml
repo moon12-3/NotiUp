@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:background="@drawable/dropdown_list_rect">
 
     <ImageView
@@ -22,4 +23,4 @@
         android:textColor="#FFFFFF"
         android:textSize="20sp"/>
 
-</LinearLayout>
+</LinearLayout >
