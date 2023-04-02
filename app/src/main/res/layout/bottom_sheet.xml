@@ -118,7 +118,7 @@
             android:timePickerMode="spinner"
             android:background="#55727272"/>
         <LinearLayout
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="1dp"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -241,6 +241,126 @@
                 android:layout_gravity="center"
                 android:background="@drawable/right_arrow"/>
         </LinearLayout>
+            <TextView
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="알림 시 나타날 메모를 설정합니다"
+                android:textStyle="bold"
+                android:textColor="#50FFFFFF"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"/>
+            <TextView
+                android:layout_marginTop="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="알람 설정"
+                android:textStyle="bold"
+                android:textColor="#50FFFFFF"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"/>
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_width="390dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/rect">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="잠금 화면"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:switchMinWidth="50dp"
+                    android:thumb="@drawable/switch_thumb_selector"
+                    android:track="@drawable/switch_track_selector"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="1dp"
+                android:layout_width="390dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/rect2">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="알림 센터"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:switchMinWidth="50dp"
+                    android:thumb="@drawable/switch_thumb_selector"
+                    android:track="@drawable/switch_track_selector"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="1dp"
+                android:layout_width="390dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/rect3">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="베너"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:switchMinWidth="50dp"
+                    android:thumb="@drawable/switch_thumb_selector"
+                    android:track="@drawable/switch_track_selector"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <TextView
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="알림의 스타일을 설정합니다"
+                android:textStyle="bold"
+                android:textColor="#50FFFFFF"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
