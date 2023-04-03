@@ -61,7 +61,7 @@
         </ScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_filter"
+            android:id="@+id/fabTag"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="start"

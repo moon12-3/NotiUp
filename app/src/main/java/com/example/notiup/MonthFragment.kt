@@ -84,13 +84,20 @@ class MonthFragment : Fragment() {
 
         // bottom sheet 내용
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-        
+        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
+
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         binding.fabEdit.setOnClickListener {
             bottomSheetDialog.show()
             bottomSheetDialog.behavior.state = STATE_EXPANDED
+        }
+        tagBottomSheetDialog.setContentView(tagBottomSheetView)
+        binding.fabTag.setOnClickListener {
+            tagBottomSheetDialog.show()
+            tagBottomSheetDialog.behavior.state = STATE_EXPANDED
         }
         // 시작 날짜 정하기
         val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
