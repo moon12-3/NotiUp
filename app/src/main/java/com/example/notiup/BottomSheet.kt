@@ -21,31 +21,6 @@ class BottomSheet : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
 
-        val etMemo = view.findViewById<EditText>(R.id.et_memo)
-        etMemo.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (etMemo.lineCount > 2) {
-                    etMemo.text.delete(etMemo.selectionStart - 1, etMemo.selectionStart)
-                }
-                if (s?.toString()?.contains("\n") == true) {
-                    etMemo.focusSearch(View.FOCUS_DOWN)?.requestFocus()
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        etMemo.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                etMemo.clearFocus()
-                true
-            } else {
-                false
-            }
-        }
-
         val list: ArrayList<DropdownList> = ArrayList()
 
         val a = DropdownList()

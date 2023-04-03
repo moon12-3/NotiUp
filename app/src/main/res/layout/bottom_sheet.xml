@@ -72,6 +72,7 @@
                 android:paddingLeft="20dp"
                 android:layout_gravity="center"
                 android:textColorHint="#66FFFFFF"
+                android:textColor="@color/white"
                 android:background="@drawable/rect4"
                 android:imeOptions="actionDone"/>
 
@@ -300,16 +301,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:hint="메모를 입력하세요."
-                android:inputType="text"
                 android:textColorHint="#66FFFFFF"
+                android:textColor="@color/white"
                 android:gravity="top"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:paddingTop="8dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:background="@drawable/rect_memo"
+                android:inputType="textMultiLine"
                 android:imeOptions="actionDone"
-                android:maxLines="2"/>
+                android:maxLength="100"/>
 
             <TextView
                 android:layout_marginTop="5dp"
