@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
 }
 
 
@@ -39,6 +40,12 @@ android {
     buildToolsVersion '30.0.3'
 }
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:30.3.2')
+// 필요한 Firebase의 부가 기능들 추가
+    implementation 'com.google.firebase:firebase-auth-ktx' // 인증
+    implementation 'com.google.firebase:firebase-firestore-ktx' // 파이어스토어(데이터베이스)
+    implementation 'com.google.firebase:firebase-storage-ktx' // 스토리지
+
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'
     implementation 'com.github.prolificinteractive:material-calendarview:1.4.3'
 

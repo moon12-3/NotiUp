@@ -10,7 +10,7 @@
         android:title="ALARM" />
     <item
         android:id="@+id/article_my"
-        android:icon="@drawable/alarm"
+        android:icon="@drawable/my"
         android:title="MY PAGE" />
 
 
