@@ -27,5 +27,7 @@
         <item>11월</item>
         <item>12월</item>
     </string-array>
+
+    <string name="pw_change"><u>비밀번호 변경하기</u></string>
 </resources>
 
