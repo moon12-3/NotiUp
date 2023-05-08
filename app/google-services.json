@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "466132144274",
+    "project_id": "noti-up",
+    "storage_bucket": "noti-up.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466132144274:android:22f030fc5542eb60b8564b",
+        "android_client_info": {
+          "package_name": "com.example.notiup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466132144274-2r5e7irrafhj0m07m5qb7inj8eqqbhbh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notiup",
+            "certificate_hash": "801ab1f36c2b19ef4e5ea4fcc59b8f351462f9f0"
+          }
+        },
+        {
+          "client_id": "466132144274-sheu2il5p1587kk7u2jajuhu7ep2rg78.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA40i9GobPTSpCAyK0svBJFXmKqHMyrv2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466132144274-sheu2il5p1587kk7u2jajuhu7ep2rg78.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
