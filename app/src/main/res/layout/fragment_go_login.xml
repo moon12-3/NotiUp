@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/back"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        android:layout_marginTop="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="로그인되지 않은 상태입니다."
+        android:textColor="@color/white"
+        android:textSize="25sp"/>
+
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_marginTop="100dp"
+        android:text="로그인하기"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:textColor="#C0ffffff"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/btn_gray"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

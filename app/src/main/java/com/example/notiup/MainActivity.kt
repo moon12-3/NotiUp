@@ -28,9 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     fun changeFragment(index:Int) {
         when(index) {
-            1->{
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+            1-> {
+                supportFragmentManager.beginTransaction().replace(R.id.frame, MonthFragment()).commit()
             }
         }
     }
