@@ -7,7 +7,7 @@
     >
 
     <TextView
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="240dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -18,7 +18,7 @@
 
     <Button
         android:id="@+id/login_btn"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:text="로그인하기"
         android:textStyle="bold"
         android:textSize="17sp"

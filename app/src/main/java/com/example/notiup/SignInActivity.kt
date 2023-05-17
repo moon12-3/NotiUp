@@ -39,14 +39,16 @@ class SignInActivity : AppCompatActivity() {
                         Toast.makeText(baseContext, "회원가입 성공", Toast.LENGTH_SHORT).show()
 
                         val user = auth.currentUser!!
+                        db.collection("users").document(user.uid).set(name)
+                            .addOnSuccessListener {
+                                Log.d("mytag", "UserDB successfully written!")
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                    e -> Log.d("mytag", "Error writing document", e)
+                            }
                         Log.d("mytag", "회원 가입(=유저 생성) 성공 ${user.toString()}")
-//                        val usermodel = UserModel(name, stuID)
-//                        db.collection("users").document(user.uid).set(usermodel)
-//                            .addOnSuccessListener {
-//                                Log.d("mytag", "UserDB successfully written!")
-//                            }
-//                            .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
-                        finish()
+
                     } else {
                         Log.w("mytag", "회원 가입 실패 (사유 : ${task.exception}")
                         Toast.makeText(baseContext, "회원 가입 실패", Toast.LENGTH_SHORT).show()

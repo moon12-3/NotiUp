@@ -50,22 +50,49 @@
                 android:textColor="#E7FE54"
                 android:layout_marginTop="90dp"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="정유진님의 Noti up 계정"
-                android:textStyle="bold"
-                android:textSize="30sp"
-                android:textColor="@color/white"
-                android:layout_marginTop="10dp"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="정유진"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="님의 Noti up 계정"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/name_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="정유진"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="님의 알람들이 이 계정에 저장됩니다."
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="정유진님의 알람들이 이 계정에 저장됩니다."
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"

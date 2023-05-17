@@ -15,11 +15,14 @@ import androidx.fragment.app.Fragment
 import com.example.notiup.databinding.FragmentUserBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class UserFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db : FirebaseFirestore
 
     lateinit var mainActivity : MainActivity
 
@@ -36,6 +39,7 @@ class UserFragment : Fragment() {
     ): View? {
         var view : View
         auth = Firebase.auth
+        db = Firebase.firestore
 
         val currentUser = auth.currentUser
 
@@ -52,7 +56,19 @@ class UserFragment : Fragment() {
         else{   // 로그인 후
             view = inflater.inflate(R.layout.fragment_user, container, false)
             val binding = FragmentUserBinding.bind(view)
-
+            val docRef = db.collection("users").document(currentUser.uid)
+            docRef.get()
+                .addOnSuccessListener { docu ->
+                    if (docu != null) {
+                        binding.nameText.text = docu.data.toString()
+                        binding.nameText2.text = docu.data.toString()
+                    }
+                    else Log.d("my_tag", "No such document")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("my_tag", "get failed with ", exception)
+                }
+            binding.tvId.text = currentUser?.email
             binding.logOut.setOnClickListener {
                 auth.signOut()
                 Toast.makeText(mainActivity, "로그아웃 되셨습니다.", Toast.LENGTH_SHORT).show()
