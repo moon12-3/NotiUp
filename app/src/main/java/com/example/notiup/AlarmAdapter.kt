@@ -1,5 +1,6 @@
 package com.example.notiup
 
+import Alarm
 import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +8,23 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 
 
 class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.CustomViewHolder>() {
 
-    private val dataSet: ArrayList<Alarms> = arrayListOf<Alarms>().apply {
-        val alarmList = arrayListOf(
-            add(Alarms("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-            add(Alarms("07 : 30", "aaaaaa", "노랑")),
-            add(Alarms("12 : 20", "ddd", "노랑")),
-            add(Alarms("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-            add(Alarms("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-            add(Alarms("08 : 30", "여기에 알람 문구가 뜹니다", "노랑"))
+    var db : AppDataBase? = null
 
-        )
+    private val dataSet: ArrayList<Alarm> = arrayListOf<Alarm>().apply {
+//        val alarmList = arrayListOf(
+//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
+//            add(Alarm("07 : 30", "aaaaaa", "노랑")),
+//            add(Alarm("12 : 20", "ddd", "노랑")),
+//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
+//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
+//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑"))
+//
+//        )
     }
 
     fun removeData(position: Int) {
@@ -34,8 +38,8 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.CustomViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.time.text = dataSet.get(position).time // TODO: 시간으로 받으면 .toString() 써주기
-        holder.text.text = dataSet.get(position).text
+//        holder.time.text = dataSet.get(position).time // TODO: 시간으로 받으면 .toString() 써주기
+//        holder.text.text = dataSet.get(position).text
     }
 
     override fun getItemCount(): Int {
@@ -48,7 +52,7 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.CustomViewHolder>() {
         val switch = itemView.findViewById<Switch>(R.id.alarm_switch)   // on/off
     }
 
-    fun addItem(position: Int, item: Alarms) {
+    fun addItem(position: Int, item: Alarm) {
         dataSet.add(position, item)
     }
 

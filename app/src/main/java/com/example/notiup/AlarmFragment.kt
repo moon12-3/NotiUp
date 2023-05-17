@@ -1,5 +1,6 @@
 package com.example.notiup
 
+import Alarm
 import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
@@ -25,7 +26,7 @@ class AlarmFragment : Fragment() {
     lateinit var mainActivity : MainActivity
 
     // 데이터 리스트
-    private var alarm = ArrayList<Alarms>()
+    private var alarm = ArrayList<Alarm>()
     // 어댑터
     private var rvAdapter = AlarmAdapter()
 
