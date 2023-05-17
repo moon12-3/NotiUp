@@ -3,6 +3,7 @@ package com.example.notiup
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.room.Room
 import com.example.notiup.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -15,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().add(R.id.frame, MonthFragment()).commit()
 
         val navView2 = findViewById<BottomNavigationView>(R.id.navigationView)
-
         navView2.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.article_month -> supportFragmentManager.beginTransaction().replace(R.id.frame, MonthFragment()).commit()
