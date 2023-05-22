@@ -38,7 +38,6 @@ import kotlin.collections.HashSet
 class MonthFragment : Fragment() {
 
     lateinit var mainActivity : MainActivity
-
     lateinit var binding : FragmentMonthBinding
 
     override fun onAttach(context: Context) {
@@ -184,6 +183,9 @@ class MonthFragment : Fragment() {
         // 취소 누르면 숨겨지게
         bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        tagBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            tagBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (

@@ -4,6 +4,7 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.auth.User
 
 @Entity(
+    tableName = "tag",
     foreignKeys = [
         ForeignKey(
             entity = User::class,

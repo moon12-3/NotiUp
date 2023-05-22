@@ -14,21 +14,19 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notiup.databinding.ActivityMainBinding
 import com.example.notiup.databinding.FragmentAlarmBinding
+import com.example.notiup.databinding.FragmentMonthBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import org.w3c.dom.Text
 
 
 class AlarmFragment : Fragment() {
 
     lateinit var mainActivity : MainActivity
+    lateinit var binding : FragmentAlarmBinding
+    private var alarm = ArrayList<Alarm>()  // 데이터 리스트
+    private var rvAdapter = AlarmAdapter()  // 어댑터
 
-    // 데이터 리스트
-    private var alarm = ArrayList<Alarm>()
-    // 어댑터
-    private var rvAdapter = AlarmAdapter()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -41,19 +39,33 @@ class AlarmFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_alarm, container, false)
-        val binding = FragmentAlarmBinding.bind(view)
+
+        binding = FragmentAlarmBinding.bind(view)
 
         // bottom view
         val bottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
+        val editBottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
+
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+        val editBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+
         bottomSheetDialog.setContentView(bottomSheetView)
         binding.fabFilter.setOnClickListener {
             bottomSheetDialog.show()
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+        editBottomSheetDialog.setContentView(editBottomSheetView)
+        binding.fabEdit.setOnClickListener {
+            editBottomSheetDialog.show()
+            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
+        // 취소 누르면 숨겨지게
         bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        editBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_alarm)
@@ -73,7 +85,6 @@ class AlarmFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
                 rvAdapter.removeData(viewHolder.layoutPosition)
-
             }
 
             // 꾹 눌러 이동할 수 없도록 함
