@@ -70,7 +70,7 @@ class MonthFragment : Fragment() {
 
         binding.materialCalendar.selectedDate = CalendarDay.today()
 
-        //recyclerView 내용
+        //recyclerView 내용 (알람)
         val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_container)
 
         val dataList = mutableListOf<String>()
@@ -81,6 +81,18 @@ class MonthFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = rvAdapter
         recyclerView.setHasFixedSize(true)
+
+        //recyclerView 내용 (체크리스트)
+        val cRecyclerView = view.findViewById<RecyclerView>(R.id.checklist_container)
+
+        val cDataList = mutableListOf<String>()
+        for(i in 1 .. 3) cDataList.add(i.toString())
+
+        val Adapter = MonthCheckAdapter(cDataList)
+
+        cRecyclerView.layoutManager = LinearLayoutManager(context)
+        cRecyclerView.adapter = Adapter
+        cRecyclerView.setHasFixedSize(true)
 
         // bottom sheet 내용
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
