@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#272727"
-    tools:context=".InfoFragment"
     android:orientation="horizontal">
 
     <FrameLayout
@@ -58,7 +57,7 @@
                     android:id="@+id/name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="정유진"
+                    android:text="ㅇㅇㅇ"
                     android:textStyle="bold"
                     android:textSize="30sp"
                     android:textColor="@color/white"
@@ -80,7 +79,7 @@
                     android:id="@+id/name_text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="정유진"
+                    android:text="ㅇㅇㅇ"
                     android:textSize="20sp"
                     android:textColor="@color/white"
                     android:layout_marginTop="10dp"/>

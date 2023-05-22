@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import com.example.notiup.databinding.FragmentUserBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -22,7 +24,7 @@ import com.google.firebase.ktx.Firebase
 class UserFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var db : FirebaseFirestore
+    private lateinit var db : DatabaseReference
 
     lateinit var mainActivity : MainActivity
 
@@ -39,7 +41,7 @@ class UserFragment : Fragment() {
     ): View? {
         var view : View
         auth = Firebase.auth
-        db = Firebase.firestore
+        db = Firebase.database.reference
 
         val currentUser = auth.currentUser
 
@@ -56,12 +58,12 @@ class UserFragment : Fragment() {
         else{   // 로그인 후
             view = inflater.inflate(R.layout.fragment_user, container, false)
             val binding = FragmentUserBinding.bind(view)
-            val docRef = db.collection("users").document(currentUser.uid)
+            val docRef = db.child("users").child(currentUser.uid)
             docRef.get()
                 .addOnSuccessListener { docu ->
                     if (docu != null) {
-                        binding.nameText.text = docu.data.toString()
-                        binding.nameText2.text = docu.data.toString()
+                        binding.nameText.text = docu.value.toString()
+                        binding.nameText2.text = docu.value.toString()
                     }
                     else Log.d("my_tag", "No such document")
                 }

@@ -44,10 +44,14 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(baseContext, "로그인 실패", Toast.LENGTH_SHORT).show()
                     }
                 }
+                .addOnFailureListener {
+                    Toast.makeText(baseContext, "로그인 실패", Toast.LENGTH_SHORT).show()
+                }
         }
 
         findViewById<TextView>(R.id.join_btn).setOnClickListener {
             startActivity(Intent(this, SignInActivity::class.java))
+            finish()
         }
     }
 }
