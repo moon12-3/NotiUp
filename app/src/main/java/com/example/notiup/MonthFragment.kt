@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.os.Build
 import android.os.Bundle
 import android.text.style.ForegroundColorSpan
 import androidx.fragment.app.Fragment
@@ -203,6 +202,9 @@ class MonthFragment : Fragment() {
         bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
+        tagBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            tagBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
@@ -284,7 +286,7 @@ class MonthFragment : Fragment() {
 
     // 선택된 날짜에 해당하는 일정 목록 가져오기
     private fun callList() {
-        
+
     }
 
     inner class WeekdayDecorator : DayViewDecorator {

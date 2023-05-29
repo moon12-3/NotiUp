@@ -5,6 +5,7 @@ import com.google.firebase.firestore.auth.User
 import java.util.*
 
 @Entity(
+    tableName = "alarm",
     foreignKeys = [
         ForeignKey(
             entity = User::class,
@@ -25,8 +26,10 @@ data class Alarm(
     val a_id: Int = 0,
     val aname: String,
     val atext: String?,
-    val sdate: Date,
-    val edate: Date,
+    val sday: Date,
+    val stime: Date,
+    val eday: Date,
+    val etime: Date,
     val repeat: Int,
     val amemo: String?,
     val lockscreen: Boolean,

@@ -1,19 +1,17 @@
 package com.example.notiup
 
 import Alarm
-import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 
 
 class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.CustomViewHolder>() {
 
-    var db : AppDataBase? = null
+    private lateinit var db: AppDataBase
 
     private val dataSet: ArrayList<Alarm> = arrayListOf<Alarm>().apply {
 //        val alarmList = arrayListOf(

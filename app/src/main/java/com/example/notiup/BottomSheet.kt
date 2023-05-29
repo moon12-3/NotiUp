@@ -10,9 +10,13 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import com.example.notiup.databinding.BottomSheetBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import java.util.*
+import kotlin.collections.ArrayList
 
 class BottomSheet : Fragment() {
-
+    private lateinit var binding : BottomSheetBinding
     private lateinit var spinner : Spinner
     private lateinit var adapter : CustomSpinnerAdapter
     override fun onCreateView(
@@ -38,12 +42,31 @@ class BottomSheet : Fragment() {
         a.setImageRes(R.drawable.check_icon)
         list.add(c)
 
+        binding.btnSave.setOnClickListener {
+            addAlarm()
+        }
+
         spinner = view.findViewById(R.id.custom_spinner)
 
         adapter = CustomSpinnerAdapter(requireContext(), list)
         spinner.adapter = adapter
 
         return view
+    }
+
+    private fun addAlarm() {
+        val aname = binding.etTitle.text
+        val sday = binding.startDay
+        val stime = binding.startTime
+        val eday = binding.endDay
+        val etime = binding.endTime
+        val repeat = binding.repeat
+        val amemo = binding.etMemo
+        val lockscreen = binding.lockscreen
+        val noticenter = binding.noticenter
+        val banner = binding.banner
+//        val user_id: Int
+//        val tag_id: Int
     }
 
 }

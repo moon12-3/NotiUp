@@ -45,6 +45,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
         <TextView
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#E7FE54"
@@ -367,6 +368,7 @@
                     android:layout_weight="1"/>
 
                 <Switch
+                    android:id="@+id/lockscreen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -398,6 +400,7 @@
                     android:layout_weight="1"/>
 
                 <Switch
+                    android:id="@+id/noticenter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -429,6 +432,7 @@
                     android:layout_weight="1"/>
 
                 <Switch
+                    android:id="@+id/banner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
