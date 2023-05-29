@@ -34,6 +34,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -42,7 +43,7 @@ android {
 }
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
-// 필요한 Firebase의 부가 기능들 추가
+    // 필요한 Firebase의 부가 기능들 추가
     implementation 'com.google.firebase:firebase-auth-ktx' // 인증
     implementation 'com.google.firebase:firebase-firestore-ktx' // 파이어스토어(데이터베이스)
     implementation 'com.google.firebase:firebase-database-ktx' // 데이터베이스
@@ -66,8 +67,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
     // Room
     implementation "androidx.room:room-runtime:2.4.0"
     kapt "androidx.room:room-compiler:2.4.0"
+
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    //noinspection LifecycleAnnotationProcessorWithJava8
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0"
 
 }

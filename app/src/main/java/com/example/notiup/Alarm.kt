@@ -7,16 +7,16 @@ import java.util.*
 @Entity(
     tableName = "alarm",
     foreignKeys = [
+//        ForeignKey(
+//            entity = User::class,
+//            parentColumns = ["u_id"],
+//            childColumns = ["u_id_fk"],
+//            onDelete = ForeignKey.CASCADE
+//        ),
         ForeignKey(
-            entity = User::class,
-            parentColumns = ["u_id"],
-            childColumns = ["u_id_fk"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = Tag::class,
-            parentColumns = ["t_id"],
-            childColumns = ["t_id_fk"],
+            entity = Tag::class,            // 현재 entity 클래스가 참조하는 외부 entity
+            parentColumns = ["t_id"],     // tag 클래스의 tag_id
+            childColumns = ["t_id_fk"],     // 현재
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -26,16 +26,15 @@ data class Alarm(
     val a_id: Int = 0,
     val aname: String,
     val atext: String?,
-    val sday: Date,
-    val stime: Date,
-    val eday: Date,
-    val etime: Date,
+    val sday: Long,
+    val stime: Long,
+    val eday: Long,
+    val etime: Long,
     val repeat: Int,
     val amemo: String?,
     val lockscreen: Boolean,
     val noticenter: Boolean,
     val banner: Boolean,
-    val user_id: Int,
-    val tag_id: Int
+//    val user_id: String?,
+    val t_id_fk: Int
 )
-
