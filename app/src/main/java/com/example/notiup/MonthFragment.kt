@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.text.style.ForegroundColorSpan
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,14 +34,17 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 import kotlin.collections.HashSet
 
 class MonthFragment : Fragment() {
 
-    lateinit var mainActivity : MainActivity
+    private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
 
-    lateinit var binding : FragmentMonthBinding
+    private lateinit var binding : FragmentMonthBinding // binding 용
+
+    private lateinit var selectedDate: String // 달력에서 선택한 날짜
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -47,20 +52,33 @@ class MonthFragment : Fragment() {
         mainActivity = context as MainActivity
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_month, container, false)
 
+        // 현재 날짜
+        selectedDate = LocalDate.now().toString()
+
+
         binding = FragmentMonthBinding.bind(view)
 
         binding.materialCalendar.apply {
-            setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))
+            setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))    // 요일을 한글로 설정
             setTitleFormatter(MonthArrayTitleFormatter(resources.getTextArray(R.array.custom_months)))
             addDecorator(WeekdayDecorator())
             setHeaderTextAppearance(R.style.CalendarWidgetHeader)
-            setTopbarVisible(false)
+            setTopbarVisible(false)     // Topbar안보이게
+        }
+
+        // 달력 날짜 선택 Listener
+        binding.materialCalendar.setOnDateChangedListener { _, date, _ ->
+            var year = date.year
+            var month = date.month + 1
+            var day = date.day
+            selectedDate = "$year-$month-$day"
         }
 
         val dateRangePicker =
@@ -262,6 +280,11 @@ class MonthFragment : Fragment() {
         ItemTouchHelper(itemCallback).attachToRecyclerView(recyclerView)
 
         return view
+    }
+
+    // 선택된 날짜에 해당하는 일정 목록 가져오기
+    private fun callList() {
+        
     }
 
     inner class WeekdayDecorator : DayViewDecorator {

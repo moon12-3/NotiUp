@@ -39,11 +39,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/user_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/title"
                 android:drawablePadding="10dp"
-                android:text="매일매일 꾸준형"
+                android:text="칭호"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="#E7FE54"

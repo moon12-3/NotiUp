@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -43,6 +44,8 @@ class UserFragment : Fragment() {
         auth = Firebase.auth
         db = Firebase.database.reference
 
+        val styles = mutableListOf<String>("매일매일 꾸준형", "행복한 개발자형", "즐.미형", "즐.코형", "즐.디형")
+
         val currentUser = auth.currentUser
 
         if(currentUser == null) {   // 로그인 전
@@ -62,8 +65,10 @@ class UserFragment : Fragment() {
             docRef.get()
                 .addOnSuccessListener { docu ->
                     if (docu != null) {
-                        binding.nameText.text = docu.value.toString()
-                        binding.nameText2.text = docu.value.toString()
+                        val userModel = docu.getValue<UserModel>()
+                        binding.nameText.text = userModel!!.name
+                        binding.nameText2.text = userModel!!.name
+                        binding.userStyle.text = styles[userModel!!.achieve_cnt]
                     }
                     else Log.d("my_tag", "No such document")
                 }

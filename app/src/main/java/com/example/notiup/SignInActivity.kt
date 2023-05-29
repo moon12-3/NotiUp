@@ -40,7 +40,8 @@ class SignInActivity : AppCompatActivity() {
                             Toast.makeText(baseContext, "회원가입 성공", Toast.LENGTH_SHORT).show()
 
                             val user = auth.currentUser?.uid!!
-                            addUserToDatabase(name, user)
+                            val userModel = UserModel(name, 0)
+                            addUserToDatabase(userModel, user)
                             finish()
                             Log.d("mytag", "회원 가입(=유저 생성) 성공 ${user.toString()}")
 
@@ -56,7 +57,7 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
-    fun addUserToDatabase(name : String, uId : String) {
-        db.child("users").child(uId).setValue(name)
+    fun addUserToDatabase(userModel : UserModel, uId : String) {
+        db.child("users").child(uId).setValue(userModel)
     }
 }
