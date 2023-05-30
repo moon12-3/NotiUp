@@ -81,6 +81,8 @@ class UserFragment : Fragment() {
                 Toast.makeText(mainActivity, "로그아웃 되셨습니다.", Toast.LENGTH_SHORT).show()
                 (activity as MainActivity).changeFragment(1)
             }
+
+
         }
 
 //        binding.userInfo.text = """

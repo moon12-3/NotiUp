@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,7 +63,6 @@ class MonthFragment : Fragment() {
         // 현재 날짜
         selectedDate = LocalDate.now().toString()
 
-
         binding = FragmentMonthBinding.bind(view)
 
         binding.materialCalendar.apply {
@@ -78,6 +79,7 @@ class MonthFragment : Fragment() {
             var month = date.month + 1
             var day = date.day
             selectedDate = "$year-$month-$day"
+            Log.d("mytag", selectedDate)
         }
 
         val dateRangePicker =
