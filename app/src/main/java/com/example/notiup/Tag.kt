@@ -6,12 +6,12 @@ import com.google.firebase.firestore.auth.User
 @Entity(
     tableName = "tag",
     foreignKeys = [
-        ForeignKey(
-            entity = User::class,
-            parentColumns = ["u_id"],
-            childColumns = ["u_id_fk"],
-            onDelete = ForeignKey.CASCADE
-        )
+//        ForeignKey(
+//            entity = User::class,
+//            parentColumns = ["u_id"],
+//            childColumns = ["u_id_fk"],
+//            onDelete = ForeignKey.CASCADE
+//        )
     ]
 )
 data class Tag(
@@ -19,5 +19,5 @@ data class Tag(
     val t_id: Int = 0,
     val tcolor: Int,
     val ttext: String,
-    val u_id: Int
+//    val u_id: Int
 )
