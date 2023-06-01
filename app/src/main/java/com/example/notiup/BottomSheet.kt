@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 
 class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
@@ -53,12 +54,33 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         val endTimePicker = binding.endTimepicker
         endTimePicker.setIs24HourView(true)
 
+        // 달력 꾸미기
+        binding.startCal.apply {
+            setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))    // 요일을 한글로 설정
+            setTitleFormatter(MonthArrayTitleFormatter(resources.getTextArray(R.array.custom_months)))
+            addDecorator(MonthFragment().WeekdayDecorator())
+            setHeaderTextAppearance(R.style.CalendarWidgetHeader)
+            setTopbarVisible(false)     // Topbar안보이게
+        }
+
+        binding.endCal.apply {
+            setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))    // 요일을 한글로 설정
+            setTitleFormatter(MonthArrayTitleFormatter(resources.getTextArray(R.array.custom_months)))
+            addDecorator(MonthFragment().WeekdayDecorator())
+            setHeaderTextAppearance(R.style.CalendarWidgetHeader)
+            setTopbarVisible(false)     // Topbar안보이게
+        }
+
         startDay.setOnClickListener {
             if(startCal.visibility==View.GONE) {
                 startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
                 startDay.setTextColor(Color.parseColor("#E7FE54"))
                 startTimePicker.visibility = View.GONE
+                endTimePicker.visibility = View.GONE
+                endCal.visibility = View.GONE
                 startCal.visibility = View.VISIBLE
+                binding.endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+                binding.endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
             }
             else {
                 startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
@@ -71,7 +93,11 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
                 endDay.setTextColor(Color.parseColor("#E7FE54"))
                 endTimePicker.visibility = View.GONE
+                startTimePicker.visibility = View.GONE
+                startCal.visibility = View.GONE
                 endCal.visibility = View.VISIBLE
+                binding.startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+                binding.startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
             }
             else {
                 endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
@@ -85,6 +111,10 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
                 startTimePicker.visibility = View.VISIBLE
                 startCal.visibility = View.GONE
+                endTimePicker.visibility = View.GONE
+                endCal.visibility = View.GONE
+                binding.endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+                binding.endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
             }
             else {
                 startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
@@ -98,6 +128,10 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
                 endTimePicker.visibility = View.VISIBLE
                 endCal.visibility = View.GONE
+                startTimePicker.visibility = View.GONE
+                startCal.visibility = View.GONE
+                binding.startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+                binding.startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
             }
             else {
                 startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
@@ -138,10 +172,10 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             else addAlarm2() // 로그인 시
         }
 
-        spinner = view.findViewById(R.id.custom_spinner)
-
-        adapter = CustomSpinnerAdapter(requireContext(), list)
-        spinner.adapter = adapter
+//        spinner = view.findViewById(R.id.custom_spinner)
+//
+//        adapter = CustomSpinnerAdapter(requireContext(), list)
+//        spinner.adapter = adapter
 
         return view
     }

@@ -57,17 +57,17 @@ class AlarmFragment : Fragment() {
         }
         editBottomSheetDialog.setContentView(editBottomSheetView)
         binding.fabEdit.setOnClickListener {
-            editBottomSheetDialog.show()
-            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            val bottomSheet = BottomSheet(mainActivity)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 
-        // 취소 누르면 숨겨지게
-        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        editBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+//        // 취소 누르면 숨겨지게
+//        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+//            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
+//        editBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+//            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_alarm)
 
