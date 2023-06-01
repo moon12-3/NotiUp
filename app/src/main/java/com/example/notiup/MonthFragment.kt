@@ -113,100 +113,104 @@ class MonthFragment : Fragment() {
         cRecyclerView.adapter = Adapter
         cRecyclerView.setHasFixedSize(true)
 
-        // bottom sheet 내용
-        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
 
-        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
 
-        bottomSheetDialog.setContentView(bottomSheetView)
+//        // bottom sheet 내용
+//        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
+//        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
+//
+//        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+//        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+//
+//        bottomSheetDialog.setContentView(bottomSheetView)
+//        binding.fabEdit.setOnClickListener {
+//            bottomSheetDialog.show()
+//            bottomSheetDialog.behavior.state = STATE_EXPANDED
+//        }
+//        tagBottomSheetDialog.setContentView(tagBottomSheetView)
+
+
         binding.fabEdit.setOnClickListener {
-            bottomSheetDialog.show()
-            bottomSheetDialog.behavior.state = STATE_EXPANDED
+            val bottomSheet = BottomSheet(mainActivity)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
-        tagBottomSheetDialog.setContentView(tagBottomSheetView)
-        binding.fabTag.setOnClickListener {
-            tagBottomSheetDialog.show()
-            tagBottomSheetDialog.behavior.state = STATE_EXPANDED
-        }
-        // 시작 날짜 정하기
-        val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
-        val startCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.start_cal)
-
-        // 끝나는 날짜 정하기
-        val endDay = bottomSheetView.findViewById<TextView>(R.id.end_day)
-        val endCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.end_cal)
-
-        // 시작 시간
-        val startTime = bottomSheetView.findViewById<TextView>(R.id.start_time)
-        val endTime = bottomSheetView.findViewById<TextView>(R.id.end_time)
-        // 시계
-        val startTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.start_timepicker)
-        startTimePicker.setIs24HourView(true)
-        val endTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.end_timepicker)
-        endTimePicker.setIs24HourView(true)
-
-        startDay.setOnClickListener {
-            if(startCal.visibility==View.GONE) {
-                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-                startDay.setTextColor(Color.parseColor("#E7FE54"))
-                startTimePicker.visibility = View.GONE
-                startCal.visibility = View.VISIBLE
-            }
-            else {
-                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-                startCal.visibility = View.GONE
-            }
-        }
-
-        endDay.setOnClickListener {
-            if(endCal.visibility==View.GONE) {
-                endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-                endDay.setTextColor(Color.parseColor("#E7FE54"))
-                endTimePicker.visibility = View.GONE
-                endCal.visibility = View.VISIBLE
-            }
-            else {
-                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-                endCal.visibility = View.GONE
-            }
-        }
-
-        startTime.setOnClickListener {
-            if(startTimePicker.visibility == View.GONE) {
-                startTime.setTextColor(Color.parseColor("#E7FE54"))
-                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-                startTimePicker.visibility = View.VISIBLE
-                startCal.visibility = View.GONE
-            }
-            else {
-                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-                startTimePicker.visibility = View.GONE
-            }
-        }
-
-        endTime.setOnClickListener {
-            if(endTimePicker.visibility == View.GONE) {
-                endTime.setTextColor(Color.parseColor("#E7FE54"))
-                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-                endTimePicker.visibility = View.VISIBLE
-                endCal.visibility = View.GONE
-            }
-            else {
-                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-                startTimePicker.visibility = View.GONE
-            }
-        }
-
-
-        // 취소 누르면 숨겨지게
-        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        tagBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            tagBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+//        // 시작 날짜 정하기
+//        val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
+//        val startCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.start_cal)
+//
+//        // 끝나는 날짜 정하기
+//        val endDay = bottomSheetView.findViewById<TextView>(R.id.end_day)
+//        val endCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.end_cal)
+//
+//        // 시작 시간
+//        val startTime = bottomSheetView.findViewById<TextView>(R.id.start_time)
+//        val endTime = bottomSheetView.findViewById<TextView>(R.id.end_time)
+//        // 시계
+//        val startTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.start_timepicker)
+//        startTimePicker.setIs24HourView(true)
+//        val endTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.end_timepicker)
+//        endTimePicker.setIs24HourView(true)
+//
+//        startDay.setOnClickListener {
+//            if(startCal.visibility==View.GONE) {
+//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                startDay.setTextColor(Color.parseColor("#E7FE54"))
+//                startTimePicker.visibility = View.GONE
+//                startCal.visibility = View.VISIBLE
+//            }
+//            else {
+//                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                startCal.visibility = View.GONE
+//            }
+//        }
+//
+//        endDay.setOnClickListener {
+//            if(endCal.visibility==View.GONE) {
+//                endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                endDay.setTextColor(Color.parseColor("#E7FE54"))
+//                endTimePicker.visibility = View.GONE
+//                endCal.visibility = View.VISIBLE
+//            }
+//            else {
+//                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                endCal.visibility = View.GONE
+//            }
+//        }
+//
+//        startTime.setOnClickListener {
+//            if(startTimePicker.visibility == View.GONE) {
+//                startTime.setTextColor(Color.parseColor("#E7FE54"))
+//                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                startTimePicker.visibility = View.VISIBLE
+//                startCal.visibility = View.GONE
+//            }
+//            else {
+//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                startTimePicker.visibility = View.GONE
+//            }
+//        }
+//
+//        endTime.setOnClickListener {
+//            if(endTimePicker.visibility == View.GONE) {
+//                endTime.setTextColor(Color.parseColor("#E7FE54"))
+//                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                endTimePicker.visibility = View.VISIBLE
+//                endCal.visibility = View.GONE
+//            }
+//            else {
+//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
+//                startTimePicker.visibility = View.GONE
+//            }
+//        }
+//
+//
+//        // 취소 누르면 숨겨지게
+//        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+//            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
+//        tagBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+//            tagBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT

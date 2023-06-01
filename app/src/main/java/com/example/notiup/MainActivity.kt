@@ -3,6 +3,7 @@ package com.example.notiup
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.FragmentManager
 import androidx.room.Room
 import com.example.notiup.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,5 +33,9 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction().replace(R.id.frame, MonthFragment()).commit()
             }
         }
+    }
+
+    fun getSupportFragmentMana(): FragmentManager {
+        return supportFragmentManager
     }
 }
