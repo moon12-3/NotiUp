@@ -18,6 +18,8 @@ import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +30,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -42,10 +49,14 @@ import kotlin.collections.HashSet
 class MonthFragment : Fragment() {
 
     private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
+    private lateinit var db : FirebaseFirestore
 
     private lateinit var binding : FragmentMonthBinding // binding 용
 
     private lateinit var selectedDate: String // 달력에서 선택한 날짜
+
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var rvAdapter : MonthAlarmAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -60,10 +71,19 @@ class MonthFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_month, container, false)
 
+        binding = FragmentMonthBinding.bind(view)
+        db = Firebase.firestore
+
         // 현재 날짜
         selectedDate = LocalDate.now().toString()
 
-        binding = FragmentMonthBinding.bind(view)
+        Log.d("mytag", "나는 매번 출력되는가?")
+
+        //recyclerView 내용 (알람)
+        recyclerView = view.findViewById(R.id.fragment_container)
+
+        // DB 가져오기
+        setDB()
 
         binding.materialCalendar.apply {
             setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))    // 요일을 한글로 설정
@@ -73,6 +93,8 @@ class MonthFragment : Fragment() {
             setTopbarVisible(false)     // Topbar안보이게
         }
 
+        val bundle = Bundle()
+
         // 달력 날짜 선택 Listener
         binding.materialCalendar.setOnDateChangedListener { _, date, _ ->
             var year = date.year
@@ -80,6 +102,8 @@ class MonthFragment : Fragment() {
             var day = date.day
             selectedDate = "$year-$month-$day"
             Log.d("mytag", selectedDate)
+
+            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
         }
 
         val dateRangePicker =
@@ -88,18 +112,6 @@ class MonthFragment : Fragment() {
                 .build()
 
         binding.materialCalendar.selectedDate = CalendarDay.today()
-
-        //recyclerView 내용 (알람)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_container)
-
-        val dataList = mutableListOf<String>()
-        for(i in 1 .. 3) dataList.add(i.toString())
-
-        val rvAdapter = MonthAlarmAdapter(dataList)
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = rvAdapter
-        recyclerView.setHasFixedSize(true)
 
         //recyclerView 내용 (체크리스트)
         val cRecyclerView = view.findViewById<RecyclerView>(R.id.checklist_container)
@@ -134,83 +146,6 @@ class MonthFragment : Fragment() {
             val bottomSheet = BottomSheet(mainActivity)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
-//        // 시작 날짜 정하기
-//        val startDay = bottomSheetView.findViewById<TextView>(R.id.start_day)
-//        val startCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.start_cal)
-//
-//        // 끝나는 날짜 정하기
-//        val endDay = bottomSheetView.findViewById<TextView>(R.id.end_day)
-//        val endCal = bottomSheetView.findViewById<MaterialCalendarView>(R.id.end_cal)
-//
-//        // 시작 시간
-//        val startTime = bottomSheetView.findViewById<TextView>(R.id.start_time)
-//        val endTime = bottomSheetView.findViewById<TextView>(R.id.end_time)
-//        // 시계
-//        val startTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.start_timepicker)
-//        startTimePicker.setIs24HourView(true)
-//        val endTimePicker = bottomSheetView.findViewById<TimePicker>(R.id.end_timepicker)
-//        endTimePicker.setIs24HourView(true)
-//
-//        startDay.setOnClickListener {
-//            if(startCal.visibility==View.GONE) {
-//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                startDay.setTextColor(Color.parseColor("#E7FE54"))
-//                startTimePicker.visibility = View.GONE
-//                startCal.visibility = View.VISIBLE
-//            }
-//            else {
-//                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                startCal.visibility = View.GONE
-//            }
-//        }
-//
-//        endDay.setOnClickListener {
-//            if(endCal.visibility==View.GONE) {
-//                endTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                endDay.setTextColor(Color.parseColor("#E7FE54"))
-//                endTimePicker.visibility = View.GONE
-//                endCal.visibility = View.VISIBLE
-//            }
-//            else {
-//                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                endCal.visibility = View.GONE
-//            }
-//        }
-//
-//        startTime.setOnClickListener {
-//            if(startTimePicker.visibility == View.GONE) {
-//                startTime.setTextColor(Color.parseColor("#E7FE54"))
-//                startDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                startTimePicker.visibility = View.VISIBLE
-//                startCal.visibility = View.GONE
-//            }
-//            else {
-//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                startTimePicker.visibility = View.GONE
-//            }
-//        }
-//
-//        endTime.setOnClickListener {
-//            if(endTimePicker.visibility == View.GONE) {
-//                endTime.setTextColor(Color.parseColor("#E7FE54"))
-//                endDay.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                endTimePicker.visibility = View.VISIBLE
-//                endCal.visibility = View.GONE
-//            }
-//            else {
-//                startTime.setTextColor(Color.parseColor("#ccFFFFFF"))
-//                startTimePicker.visibility = View.GONE
-//            }
-//        }
-//
-//
-//        // 취소 누르면 숨겨지게
-//        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-//            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-//        tagBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-//            tagBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
@@ -293,6 +228,29 @@ class MonthFragment : Fragment() {
     // 선택된 날짜에 해당하는 일정 목록 가져오기
     private fun callList() {
 
+    }
+
+    //
+    private fun setDB() {
+        val docRef = db.collection("schedule")
+
+        docRef.get()
+            .addOnSuccessListener { result ->
+                val scheduleList = mutableListOf<ScheduleModel>()
+
+                scheduleList.clear()
+                for (document in result) {
+                    val schedule = document.toObject<ScheduleModel>()
+                    scheduleList.add(schedule)
+                    Log.d("mytag", "${document.id} => ${document.data}")
+                }
+
+                rvAdapter = MonthAlarmAdapter(scheduleList)
+
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = rvAdapter
+                recyclerView.setHasFixedSize(true)
+            }
     }
 
     inner class WeekdayDecorator : DayViewDecorator {

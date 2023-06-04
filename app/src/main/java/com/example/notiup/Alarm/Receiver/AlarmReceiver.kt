@@ -3,6 +3,7 @@ package com.example.notiup.Alarm.Receiver
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.notiup.Alarm.Service.AlarmService
+import com.example.notiup.R
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -39,7 +41,22 @@ class AlarmReceiver : BroadcastReceiver() {
         builder = NotificationCompat.Builder(context, CHANNEL_ID)
 
         val intent2 = Intent(context, AlarmService::class.java)
-        
+        val requestCode = intent?.extras!!.getInt("alarm_rqCode")
+        val title = intent.extras!!.getString("content")
 
+        val pendingIntent = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.S){
+            PendingIntent.getActivity(context,requestCode,intent2,PendingIntent.FLAG_IMMUTABLE); //Activity를 시작하는 인텐트 생성
+        }else {
+            PendingIntent.getActivity(context,requestCode,intent2,PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
+        val notification = builder.setContentTitle(title)
+            .setContentText("SCHEDULE MANAGER")
+            .setSmallIcon(R.drawable.rect2)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        manager.notify(1, notification)
     }
 }
