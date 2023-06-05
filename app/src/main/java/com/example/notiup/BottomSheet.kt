@@ -23,7 +23,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
 
 class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
@@ -78,14 +81,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
-        selectedDate = LocalDate.now().toString()
-        val date = selectedDate.split("-")
-
-        val day = "${date[0]}. ${date[1]}. ${date[2]}."
-
-        binding.startDay.text = day
-        binding.endDay.text = day
-
         binding.startCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
@@ -109,6 +104,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         // 취소 누르면 숨겨지게
         binding.cancel.setOnClickListener {
             dismiss()
+            (activity as MainActivity).changeFragment(1)
         }
 
         // 나경씨의 코드
@@ -185,7 +181,8 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             selectedDate
         )
 
-        db.collection("schedule").add(schedule)
+        val coll = "schedule ${auth.currentUser!!.uid}"
+        db.collection(coll).add(schedule)
             .addOnSuccessListener {
                 Log.d("mytag", "DocumentSnapshot successfully written!")
                 Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()

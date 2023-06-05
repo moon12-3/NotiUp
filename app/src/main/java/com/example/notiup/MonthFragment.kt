@@ -30,6 +30,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -50,6 +52,7 @@ class MonthFragment : Fragment() {
 
     private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
     private lateinit var db : FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var binding : FragmentMonthBinding // binding 용
 
@@ -73,11 +76,15 @@ class MonthFragment : Fragment() {
 
         binding = FragmentMonthBinding.bind(view)
         db = Firebase.firestore
+        auth = Firebase.auth
+
+        binding.materialCalendar.selectedDate = CalendarDay.today()
 
         // 현재 날짜
-        selectedDate = LocalDate.now().toString()
-
-        Log.d("mytag", "나는 매번 출력되는가?")
+        var year = binding.materialCalendar.selectedDate!!.year
+        var month = binding.materialCalendar.selectedDate!!.month + 1
+        var day = binding.materialCalendar.selectedDate!!.day
+        selectedDate = "$year-$month-$day"
 
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.fragment_container)
@@ -93,8 +100,6 @@ class MonthFragment : Fragment() {
             setTopbarVisible(false)     // Topbar안보이게
         }
 
-        val bundle = Bundle()
-
         // 달력 날짜 선택 Listener
         binding.materialCalendar.setOnDateChangedListener { _, date, _ ->
             var year = date.year
@@ -103,7 +108,7 @@ class MonthFragment : Fragment() {
             selectedDate = "$year-$month-$day"
             Log.d("mytag", selectedDate)
 
-            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
+            setDB()
         }
 
         val dateRangePicker =
@@ -111,7 +116,7 @@ class MonthFragment : Fragment() {
                 .setTitleText("Select dates")
                 .build()
 
-        binding.materialCalendar.selectedDate = CalendarDay.today()
+
 
         //recyclerView 내용 (체크리스트)
         val cRecyclerView = view.findViewById<RecyclerView>(R.id.checklist_container)
@@ -143,6 +148,7 @@ class MonthFragment : Fragment() {
 
 
         binding.fabEdit.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
@@ -232,7 +238,8 @@ class MonthFragment : Fragment() {
 
     //
     private fun setDB() {
-        val docRef = db.collection("schedule")
+        val coll = "schedule ${auth.currentUser!!.uid}"
+        val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
 
         docRef.get()
             .addOnSuccessListener { result ->
