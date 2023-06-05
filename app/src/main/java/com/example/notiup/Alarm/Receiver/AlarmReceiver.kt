@@ -42,7 +42,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val intent2 = Intent(context, AlarmService::class.java)
         val requestCode = intent?.extras!!.getInt("alarm_rqCode")
-        val title = intent.extras!!.getString("content")
+        val title = intent.extras!!.getString("text")
+        val content = intent.extras!!.getString("content")
 
         val pendingIntent = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.S){
             PendingIntent.getActivity(context,requestCode,intent2,PendingIntent.FLAG_IMMUTABLE); //Activity를 시작하는 인텐트 생성
@@ -51,7 +52,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val notification = builder.setContentTitle(title)
-            .setContentText("SCHEDULE MANAGER")
+            .setContentText(content)
             .setSmallIcon(R.drawable.rect2)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)

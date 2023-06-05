@@ -166,15 +166,16 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     }
 
     private fun addAlarm2() {
+        val text = binding.etTitle.text.toString()
         val content = binding.etMemo.text.toString()
 
-        val hour = binding.endTimepicker.hour.toString()
-        val minute = binding.endTimepicker.minute.toString()
+        val hour = binding.startTimepicker.hour.toString()
+        val minute = binding.startTimepicker.minute.toString()
         val time = "$selectedDate $hour:$minute:00" // 알람이 울리는 시간
 
         val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
         val alarmCode = random.random()
-        setAlarm(alarmCode, content, time)
+        setAlarm(alarmCode, content, text, time)
     }
 
     private fun uploadAlarm() {
@@ -194,8 +195,8 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
     }
 
-    private fun setAlarm(alarmCode : Int, content : String, time : String){
-        alarmFunctions.callAlarm(time, alarmCode, content)
+    private fun setAlarm(alarmCode : Int, content : String, text : String, time : String){
+        alarmFunctions.callAlarm(time, alarmCode, text, content)
     }
 
     private fun setSetting() {
