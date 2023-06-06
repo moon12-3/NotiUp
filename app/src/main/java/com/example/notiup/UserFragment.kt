@@ -21,6 +21,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Text
 
 class UserFragment : Fragment() {
 
@@ -33,6 +34,8 @@ class UserFragment : Fragment() {
         super.onAttach(context)
 
         mainActivity = context as MainActivity
+        auth = Firebase.auth
+        db = Firebase.database.reference
     }
 
     override fun onCreateView(
@@ -41,8 +44,6 @@ class UserFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view : View
-        auth = Firebase.auth
-        db = Firebase.database.reference
 
         val styles = mutableListOf<String>("매일매일 꾸준형", "행복한 개발자형", "즐.미형", "즐.코형", "즐.디형")
 
@@ -61,20 +62,22 @@ class UserFragment : Fragment() {
         else{   // 로그인 후
             view = inflater.inflate(R.layout.fragment_user, container, false)
             val binding = FragmentUserBinding.bind(view)
-            val docRef = db.child("users").child(currentUser.uid)
-            docRef.get()
-                .addOnSuccessListener { docu ->
-                    if (docu != null) {
-                        val userModel = docu.getValue<UserModel>()
-                        binding.nameText.text = userModel!!.name
-                        binding.nameText2.text = userModel!!.name
-                        binding.userStyle.text = styles[userModel!!.achieve_cnt]
+            currentUser?.let {
+                val docRef = db.child("users").child(currentUser.uid)
+                docRef.get()
+                    .addOnSuccessListener { docu ->
+                        if (docu != null) {
+                            val userModel = docu.getValue<UserModel>()
+                            binding.nameText.text = userModel!!.name
+                            binding.nameText2.text = userModel!!.name
+                            binding.userStyle.text = styles[userModel!!.achieve_cnt]
+                        }
+                        else Log.d("my_tag", "No such document")
                     }
-                    else Log.d("my_tag", "No such document")
-                }
-                .addOnFailureListener { exception ->
-                    Log.d("my_tag", "get failed with ", exception)
-                }
+                    .addOnFailureListener { exception ->
+                        Log.d("my_tag", "get failed with ", exception)
+                    }
+            }
             binding.tvId.text = currentUser?.email
             binding.logOut.setOnClickListener {
                 auth.signOut()

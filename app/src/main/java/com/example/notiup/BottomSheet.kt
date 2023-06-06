@@ -175,13 +175,18 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     }
 
     private fun uploadAlarm() {
+        var hour = binding.startTimepicker.hour.toString()
+        var minute = binding.startTimepicker.minute.toString()
+        if(hour.length == 1) hour = "0$hour"
+        if(minute.length == 1) minute = "0$minute"
         val schedule = ScheduleModel(
             binding.etTitle.text.toString(),
             binding.etMemo.text.toString(),
-            selectedDate
+            selectedDate,
+            "$hour : $minute"
         )
 
-        val coll = "schedule ${auth.currentUser!!.uid}"
+        val coll = "schedule ${auth.currentUser!!.email}"
         db.collection(coll).add(schedule)
             .addOnSuccessListener {
                 Log.d("mytag", "DocumentSnapshot successfully written!")

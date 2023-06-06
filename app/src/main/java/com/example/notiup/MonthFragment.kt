@@ -32,6 +32,8 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -85,6 +87,7 @@ class MonthFragment : Fragment() {
         var month = binding.materialCalendar.selectedDate!!.month + 1
         var day = binding.materialCalendar.selectedDate!!.day
         selectedDate = "$year-$month-$day"
+        binding.calHeader.text = "${year}년 ${month}월"
 
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.fragment_container)
@@ -111,6 +114,12 @@ class MonthFragment : Fragment() {
             setDB()
         }
 
+        binding.materialCalendar.setOnMonthChangedListener { _, date ->
+            var year = date.year
+            var month = date.month + 1
+            binding.calHeader.text = "${year}년 ${month}월"
+        }
+
         val dateRangePicker =
             MaterialDatePicker.Builder.dateRangePicker()
                 .setTitleText("Select dates")
@@ -132,19 +141,12 @@ class MonthFragment : Fragment() {
 
 
 
-//        // bottom sheet 내용
-//        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-//        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
-//
-//        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-//        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-//
-//        bottomSheetDialog.setContentView(bottomSheetView)
-//        binding.fabEdit.setOnClickListener {
-//            bottomSheetDialog.show()
-//            bottomSheetDialog.behavior.state = STATE_EXPANDED
-//        }
-//        tagBottomSheetDialog.setContentView(tagBottomSheetView)
+        // bottom sheet 내용
+        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
+
+        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+
+        tagBottomSheetDialog.setContentView(tagBottomSheetView)
 
 
         binding.fabEdit.setOnClickListener {
@@ -236,9 +238,12 @@ class MonthFragment : Fragment() {
 
     }
 
-    //
+
+
+
+    // DB에서 추가한 알람 불러오는 함수
     private fun setDB() {
-        val coll = "schedule ${auth.currentUser!!.uid}"
+        val coll = "schedule ${auth.currentUser!!.email}"
         val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
 
         docRef.get()
