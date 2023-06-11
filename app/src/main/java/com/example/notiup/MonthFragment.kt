@@ -125,8 +125,6 @@ class MonthFragment : Fragment() {
                 .setTitleText("Select dates")
                 .build()
 
-
-
         //recyclerView 내용 (체크리스트)
         val cRecyclerView = view.findViewById<RecyclerView>(R.id.checklist_container)
 
@@ -138,8 +136,6 @@ class MonthFragment : Fragment() {
         cRecyclerView.layoutManager = LinearLayoutManager(context)
         cRecyclerView.adapter = Adapter
         cRecyclerView.setHasFixedSize(true)
-
-
 
         // bottom sheet 내용
         val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
@@ -238,31 +234,34 @@ class MonthFragment : Fragment() {
 
     }
 
-
-
-
     // DB에서 추가한 알람 불러오는 함수
     private fun setDB() {
-        val coll = "schedule ${auth.currentUser!!.email}"
-        val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val coll = "schedule ${auth.currentUser!!.email}"
+            val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
 
-        docRef.get()
-            .addOnSuccessListener { result ->
-                val scheduleList = mutableListOf<ScheduleModel>()
+            docRef.get()
+                .addOnSuccessListener { result ->
+                    val scheduleList = mutableListOf<ScheduleModel>()
 
-                scheduleList.clear()
-                for (document in result) {
-                    val schedule = document.toObject<ScheduleModel>()
-                    scheduleList.add(schedule)
-                    Log.d("mytag", "${document.id} => ${document.data}")
+                    scheduleList.clear()
+                    for (document in result) {
+                        val schedule = document.toObject<ScheduleModel>()
+                        scheduleList.add(schedule)
+                        Log.d("mytag", "${document.id} => ${document.data}")
+                    }
+
+                    rvAdapter = MonthAlarmAdapter(scheduleList)
+
+                    recyclerView.layoutManager = LinearLayoutManager(context)
+                    recyclerView.adapter = rvAdapter
+                    recyclerView.setHasFixedSize(true)
                 }
+        } else {
+            Log.d("mytag", "Current user is null")
+        }
 
-                rvAdapter = MonthAlarmAdapter(scheduleList)
-
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.adapter = rvAdapter
-                recyclerView.setHasFixedSize(true)
-            }
     }
 
     inner class WeekdayDecorator : DayViewDecorator {

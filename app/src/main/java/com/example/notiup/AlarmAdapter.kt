@@ -1,16 +1,12 @@
 package com.example.notiup
 
-import Alarm
-import AppDatabase
+import com.example.notiup.db.AppDatabase
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notiup.databinding.AlarmItemBinding
 import com.example.notiup.databinding.ListItemBinding
-import kotlinx.coroutines.NonDisposableHandle.parent
+import com.example.notiup.entity.Alarm
 
 
 class AlarmAdapter(val dataList : MutableList<ScheduleModel>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
@@ -22,19 +18,10 @@ class AlarmAdapter(val dataList : MutableList<ScheduleModel>) : RecyclerView.Ada
         }
     }
 
-    private lateinit var db: AppDatabase
-
-//    private val alarmList: ArrayList<Alarm> = arrayListOf<Alarm>().apply {
-//        val alarmList = arrayListOf(
-//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-//            add(Alarm("07 : 30", "aaaaaa", "노랑")),
-//            add(Alarm("12 : 20", "ddd", "노랑")),
-//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑")),
-//            add(Alarm("08 : 30", "여기에 알람 문구가 뜹니다", "노랑"))
-//
-//        )
-//    }
+    interface ItemClick{
+        fun onClick(view: View, position: Int, list: ArrayList<Alarm>)
+    }
+    var itemClick : ItemClick? = null
 
     fun removeData(position: Int) {
         dataList.removeAt(position)
@@ -50,9 +37,9 @@ class AlarmAdapter(val dataList : MutableList<ScheduleModel>) : RecyclerView.Ada
     // dataSet의 사이즈 리턴
     override fun getItemCount(): Int = dataList.size
 
-//    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        val rv_alarm = itemView
-//    }
+    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val rv_alarm = itemView
+    }
 
     fun removeItem(position: Int) {
         dataList.removeAt(position)

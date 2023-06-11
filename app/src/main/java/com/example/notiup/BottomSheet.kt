@@ -13,6 +13,9 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
 import com.example.notiup.databinding.BottomSheetBinding
+import com.example.notiup.db.AlarmDao
+import com.example.notiup.db.AppDatabase
+import com.example.notiup.entity.Alarm
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -23,6 +26,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
@@ -36,6 +42,9 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db : FirebaseFirestore
     private lateinit var selectedDate : String
+    private lateinit var alarmDao: AlarmDao
+
+    private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
 
     private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
 
@@ -65,7 +74,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         }
     }
 
-    private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,6 +83,9 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
+
+        val roomDb = AppDatabase.getInstance(requireContext())
+        alarmDao = roomDb.alarmDao()
 
         binding = BottomSheetBinding.bind(view)
         db = Firebase.firestore
@@ -128,50 +139,28 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         a.setImageRes(R.drawable.check_icon)
         list.add(c)
 
+        val alarm = Alarm(atitle = "a", sday = "1", stime = "2", eday = "3", etime = "4", repeat = 1, amemo = "메모")
+        // 저장 버튼
         binding.btnSave.setOnClickListener {
             val currentUser = auth.currentUser
-
-            if(currentUser == null) addAlarm()  // 로그인 전
-            else {
+            if(currentUser == null) {   // 로그인 전
+//                addAlarm()
+                CoroutineScope(Dispatchers.IO).launch{
+                    alarmDao.insert(alarm)
+                    Log.d("mytag", "insert 성공!!!!!!!!!!!")
+                }
+            } else {
                 addAlarm2()
                 uploadAlarm()
             } // 로그인 시
         }
 
-//        spinner = view.findViewById(R.id.custom_spinner)
-//
-//        adapter = CustomSpinnerAdapter(requireContext(), list)
-//        spinner.adapter = adapter
+        spinner = view.findViewById(R.id.custom_spinner)
+
+        adapter = CustomSpinnerAdapter(requireContext(), list)
+        spinner.adapter= adapter
 
         return view
-    }
-
-    private fun addAlarm() {
-        val aname = binding.etTitle.text
-        val sday = binding.startDay
-        val stime = binding.startTime
-        val eday = binding.endDay
-        val etime = binding.endTime
-        val repeat = binding.repeat
-        val amemo = binding.etMemo
-        val lockscreen = binding.lockscreen
-        val noticenter = binding.noticenter
-        val banner = binding.banner
-//        val user_id: Int
-//        val tag_id: Int
-    }
-
-    private fun addAlarm2() {
-        val text = binding.etTitle.text.toString()
-        val content = binding.etMemo.text.toString()
-
-        val hour = binding.startTimepicker.hour.toString()
-        val minute = binding.startTimepicker.minute.toString()
-        val time = "$selectedDate $hour:$minute:00" // 알람이 울리는 시간
-
-        val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
-        val alarmCode = random.random()
-        setAlarm(alarmCode, content, text, time)
     }
 
     private fun uploadAlarm() {
@@ -195,10 +184,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 (activity as MainActivity).changeFragment(1)
             }
             .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
-    }
-
-    private fun setAlarm(alarmCode : Int, content : String, text : String, time : String){
-        alarmFunctions.callAlarm(time, alarmCode, text, content)
     }
 
     private fun setSetting() {
@@ -270,5 +255,37 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 startTimePicker.visibility = View.GONE
             }
         }
+
+    }
+
+    private fun addAlarm() {
+        val aname = binding.etTitle.text.toString()
+        val sday = binding.startDay.text.toString()
+        val stime = binding.startTime.text.toString()
+        val eday = binding.endDay.text.toString()
+        val etime = binding.endTime.text.toString()
+        val repeat = binding.repeat
+        val amemo = binding.etMemo.text.toString()
+//        val lockscreen = binding.lockscreen
+//        val noticenter = binding.noticenter
+//        val banner = binding.banner
+//        val t_id_fk: Int
+    }
+
+    private fun addAlarm2() {
+        val text = binding.etTitle.text.toString()
+        val content = binding.etMemo.text.toString()
+
+        val hour = binding.startTimepicker.hour.toString()
+        val minute = binding.startTimepicker.minute.toString()
+        val time = "$selectedDate $hour:$minute:00" // 알람이 울리는 시간
+
+        val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
+        val alarmCode = random.random()
+        setAlarm(alarmCode, content, text, time)
+    }
+
+    private fun setAlarm(alarmCode : Int, content : String, text : String, time : String){
+        alarmFunctions.callAlarm(time, alarmCode, text, content)
     }
 }

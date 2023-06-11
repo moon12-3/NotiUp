@@ -46,7 +46,7 @@ class AlarmFunctions(private val context: Context?){
 
         val calendar = Calendar.getInstance()
         calendar.time = datetime
-        Toast.makeText(context, "Alarm 예정 : $time", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "com.example.notiup.entity.Alarm 예정 : $time", Toast.LENGTH_SHORT).show()
 
         //API 23(android 6.0) 이상(해당 api 레벨부터 도즈모드 도입으로 setExact 사용 시 알람이 울리지 않음)
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent);

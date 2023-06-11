@@ -24,7 +24,15 @@ class CustomSpinnerAdapter(private val context: Context, private val items: Arra
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        TODO("Not yet implemented")
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.custom_spinner_dropdown_item, null)
+
+        val textView = view.findViewById<TextView>(R.id.tvCustomSpinner)
+        textView.text = items[position].getWord()
+
+        val imageView = view.findViewById<ImageView>(R.id.ivCustomSpinner)
+        imageView.setImageResource(items[position].getImageRes())
+
+        return view
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
