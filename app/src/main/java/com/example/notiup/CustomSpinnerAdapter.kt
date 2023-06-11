@@ -7,9 +7,17 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 
 
 class CustomSpinnerAdapter(private val context: Context, private val items: ArrayList<DropdownList>) : BaseAdapter() {
+
+    private var selectedItemPosition: Int = -1
+
+    fun setSelectedItemPosition(position: Int) {
+        selectedItemPosition = position
+        notifyDataSetChanged()
+    }
 
     override fun getCount(): Int {
         return items.size
@@ -32,6 +40,8 @@ class CustomSpinnerAdapter(private val context: Context, private val items: Arra
         val imageView = view.findViewById<ImageView>(R.id.ivCustomSpinner)
         imageView.setImageResource(items[position].getImageRes())
 
+        view.setBackgroundResource(R.drawable.right_arrow)
+
         return view
     }
 
@@ -42,7 +52,17 @@ class CustomSpinnerAdapter(private val context: Context, private val items: Arra
         textView.text = items[position].getWord()
 
         val imageView = view.findViewById<ImageView>(R.id.ivCustomSpinner)
-        imageView.setImageResource(items[position].getImageRes())
+//        imageView.setImageResource(items[position].getImageRes())
+//
+//        items[position].setImageRes(R.drawable.check_icon)
+
+        if (position == selectedItemPosition) {
+            imageView.visibility = View.VISIBLE // 다른 아이템의 이미지를 표시
+
+        } else {
+            imageView.visibility = View.INVISIBLE // 선택된 아이템의 이미지를 숨김
+            imageView.setImageResource(items[position].getImageRes())
+        }
 
         return view
     }

@@ -8,31 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
 import com.example.notiup.databinding.BottomSheetBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
@@ -130,14 +122,30 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         list.add(a)
 
         val b = DropdownList()
-        a.setWord("bbbbb")
-        a.setImageRes(R.drawable.check_icon)
+        b.setWord("bbbbb")
+        b.setImageRes(R.drawable.check_icon)
         list.add(b)
 
         val c = DropdownList()
-        a.setWord("cccccc")
-        a.setImageRes(R.drawable.check_icon)
+        c.setWord("cccccc")
+        c.setImageRes(R.drawable.check_icon)
         list.add(c)
+
+        spinner = view.findViewById(R.id.custom_spinner)
+        adapter = CustomSpinnerAdapter(requireContext(), list)
+        spinner.adapter= adapter
+
+        spinner.onItemSelectedListener
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                adapter.setSelectedItemPosition(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // 아무 것도 선택되지 않았을 때 처리할 작업이 있다면 여기에 작성하세요.
+            }
+        }
 
         val alarm = Alarm(atitle = "a", sday = "1", stime = "2", eday = "3", etime = "4", repeat = 1, amemo = "메모")
         // 저장 버튼
@@ -154,11 +162,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 uploadAlarm()
             } // 로그인 시
         }
-
-        spinner = view.findViewById(R.id.custom_spinner)
-
-        adapter = CustomSpinnerAdapter(requireContext(), list)
-        spinner.adapter= adapter
 
         return view
     }

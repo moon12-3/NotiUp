@@ -19,4 +19,5 @@ class DropdownList {
     fun setImageRes(imageRes: Int) {
         this.imageRes = imageRes
     }
+
 }
