@@ -18,7 +18,7 @@ class AlarmFunctions(private val context: Context?){
     private lateinit var pendingIntent: PendingIntent
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    fun callAlarm(time : String, alarm_code : Int, text : String, content : String){
+    fun callAlarm(time : String, alarm_code : Int, text : String, content : String, type : Int){
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val receiverIntent = Intent(context, AlarmReceiver::class.java) //리시버로 전달될 인텐트 설정
 
@@ -26,9 +26,10 @@ class AlarmFunctions(private val context: Context?){
             putExtra("alarm_rqCode", alarm_code) //요청 코드를 리시버에 전달
             putExtra("text", text) //수정_일정 제목을 리시버에 전달
             putExtra("content", content) //수정_일정 내용을 리시버에 전달
+            putExtra("type", type) // 배너에도 띄우는지(2) 알림센터에만 추가하는지(1) 설정
         }
 
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             PendingIntent.getBroadcast(context,alarm_code,receiverIntent,PendingIntent.FLAG_IMMUTABLE)
         else
             PendingIntent.getBroadcast(context,alarm_code,receiverIntent,PendingIntent.FLAG_UPDATE_CURRENT)
@@ -41,7 +42,7 @@ class AlarmFunctions(private val context: Context?){
             Log.d("mytag", "알람 설정 성공")
         } catch (e: ParseException) {
             e.printStackTrace()
-            Log.d("mytag", "알람 설정 성공")
+            Log.d("mytag", "알람 설정 실패")
         }
 
         val calendar = Calendar.getInstance()

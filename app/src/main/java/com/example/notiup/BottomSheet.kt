@@ -157,10 +157,11 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                     alarmDao.insert(alarm)
                     Log.d("mytag", "insert 성공!!!!!!!!!!!")
                 }
-            } else {
-                addAlarm2()
+            } else { // 로그인 시
+                if(binding.banner.isChecked) addAlarm2(2)
+                else if(binding.noticenter.isChecked) addAlarm2(1)
                 uploadAlarm()
-            } // 로그인 시
+            }
         }
 
         return view
@@ -275,7 +276,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 //        val t_id_fk: Int
     }
 
-    private fun addAlarm2() {
+    private fun addAlarm2(type : Int) {
         val text = binding.etTitle.text.toString()
         val content = binding.etMemo.text.toString()
 
@@ -285,10 +286,10 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
         val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
         val alarmCode = random.random()
-        setAlarm(alarmCode, content, text, time)
+        setAlarm(alarmCode, content, text, time, type)
     }
 
-    private fun setAlarm(alarmCode : Int, content : String, text : String, time : String){
-        alarmFunctions.callAlarm(time, alarmCode, text, content)
+    private fun setAlarm(alarmCode : Int, content : String, text : String, time : String, type : Int){
+        alarmFunctions.callAlarm(time, alarmCode, text, content, type)
     }
 }
