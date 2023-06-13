@@ -165,7 +165,7 @@ class MonthFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
                 rvAdapter.removeData(viewHolder.layoutPosition)
-
+                rvAdapter.delete(viewHolder.layoutPosition)
             }
 
             // 꾹 눌러 이동할 수 없도록 함
@@ -244,15 +244,17 @@ class MonthFragment : Fragment() {
             docRef.get()
                 .addOnSuccessListener { result ->
                     val scheduleList = mutableListOf<ScheduleModel>()
-
+                    val idList = mutableListOf<String>()
                     scheduleList.clear()
                     for (document in result) {
+                        Log.d("mytag", "${document.id}")
                         val schedule = document.toObject<ScheduleModel>()
                         scheduleList.add(schedule)
-                        Log.d("mytag", "${document.id} => ${document.data}")
+                        idList.add(document.id)
+//                        Log.d("mytag", "${document.id} => ${document.data}")
                     }
 
-                    rvAdapter = MonthAlarmAdapter(scheduleList)
+                    rvAdapter = MonthAlarmAdapter(scheduleList, idList)
 
                     recyclerView.layoutManager = LinearLayoutManager(context)
                     recyclerView.adapter = rvAdapter
