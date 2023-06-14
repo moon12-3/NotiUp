@@ -18,6 +18,8 @@ import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +30,15 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -42,10 +53,15 @@ import kotlin.collections.HashSet
 class MonthFragment : Fragment() {
 
     private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
+    private lateinit var db : FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var binding : FragmentMonthBinding // binding 용
 
     private lateinit var selectedDate: String // 달력에서 선택한 날짜
+
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var rvAdapter : MonthAlarmAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -60,10 +76,24 @@ class MonthFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_month, container, false)
 
-        // 현재 날짜
-        selectedDate = LocalDate.now().toString()
-
         binding = FragmentMonthBinding.bind(view)
+        db = Firebase.firestore
+        auth = Firebase.auth
+
+        binding.materialCalendar.selectedDate = CalendarDay.today()
+
+        // 현재 날짜
+        var year = binding.materialCalendar.selectedDate!!.year
+        var month = binding.materialCalendar.selectedDate!!.month + 1
+        var day = binding.materialCalendar.selectedDate!!.day
+        selectedDate = "$year-$month-$day"
+        binding.calHeader.text = "${year}년 ${month}월"
+
+        //recyclerView 내용 (알람)
+        recyclerView = view.findViewById(R.id.fragment_container)
+
+        // DB 가져오기
+        setDB()
 
         binding.materialCalendar.apply {
             setWeekDayLabels(arrayOf("일", "월", "화", "수", "목", "금", "토"))    // 요일을 한글로 설정
@@ -80,26 +110,20 @@ class MonthFragment : Fragment() {
             var day = date.day
             selectedDate = "$year-$month-$day"
             Log.d("mytag", selectedDate)
+
+            setDB()
+        }
+
+        binding.materialCalendar.setOnMonthChangedListener { _, date ->
+            var year = date.year
+            var month = date.month + 1
+            binding.calHeader.text = "${year}년 ${month}월"
         }
 
         val dateRangePicker =
             MaterialDatePicker.Builder.dateRangePicker()
                 .setTitleText("Select dates")
                 .build()
-
-        binding.materialCalendar.selectedDate = CalendarDay.today()
-
-        //recyclerView 내용 (알람)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_container)
-
-        val dataList = mutableListOf<String>()
-        for(i in 1 .. 3) dataList.add(i.toString())
-
-        val rvAdapter = MonthAlarmAdapter(dataList)
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = rvAdapter
-        recyclerView.setHasFixedSize(true)
 
         //recyclerView 내용 (체크리스트)
         val cRecyclerView = view.findViewById<RecyclerView>(R.id.checklist_container)
@@ -113,28 +137,19 @@ class MonthFragment : Fragment() {
         cRecyclerView.adapter = Adapter
         cRecyclerView.setHasFixedSize(true)
 
+        // bottom sheet 내용
+        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
 
+        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
 
-//        // bottom sheet 내용
-//        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-//        val tagBottomSheetView = layoutInflater.inflate(R.layout.tag_bottom_sheet, null)
-//
-//        val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-//        val tagBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-//
-//        bottomSheetDialog.setContentView(bottomSheetView)
-//        binding.fabEdit.setOnClickListener {
-//            bottomSheetDialog.show()
-//            bottomSheetDialog.behavior.state = STATE_EXPANDED
-//        }
-//        tagBottomSheetDialog.setContentView(tagBottomSheetView)
+        tagBottomSheetDialog.setContentView(tagBottomSheetView)
 
 
         binding.fabEdit.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
-
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
@@ -150,7 +165,7 @@ class MonthFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
                 rvAdapter.removeData(viewHolder.layoutPosition)
-
+                rvAdapter.delete(viewHolder.layoutPosition)
             }
 
             // 꾹 눌러 이동할 수 없도록 함
@@ -216,6 +231,38 @@ class MonthFragment : Fragment() {
 
     // 선택된 날짜에 해당하는 일정 목록 가져오기
     private fun callList() {
+
+    }
+
+    // DB에서 추가한 알람 불러오는 함수
+    private fun setDB() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val coll = "schedule ${auth.currentUser!!.email}"
+            val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
+
+            docRef.get()
+                .addOnSuccessListener { result ->
+                    val scheduleList = mutableListOf<ScheduleModel>()
+                    val idList = mutableListOf<String>()
+                    scheduleList.clear()
+                    for (document in result) {
+                        Log.d("mytag", "${document.id}")
+                        val schedule = document.toObject<ScheduleModel>()
+                        scheduleList.add(schedule)
+                        idList.add(document.id)
+//                        Log.d("mytag", "${document.id} => ${document.data}")
+                    }
+
+                    rvAdapter = MonthAlarmAdapter(scheduleList, idList)
+
+                    recyclerView.layoutManager = LinearLayoutManager(context)
+                    recyclerView.adapter = rvAdapter
+                    recyclerView.setHasFixedSize(true)
+                }
+        } else {
+            Log.d("mytag", "Current user is null")
+        }
 
     }
 

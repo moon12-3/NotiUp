@@ -5,17 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class MonthCheckAdapter(val dataList : MutableList<String>): RecyclerView.Adapter<MonthAlarmAdapter.ItemViewHolder>() {
+class MonthCheckAdapter(val dataList : MutableList<String>): RecyclerView.Adapter<MonthCheckAdapter.ItemViewHolder>() {
     class ItemViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MonthAlarmAdapter.ItemViewHolder {
+    ): ItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(viewType, parent, false)
 
-        return MonthAlarmAdapter.ItemViewHolder(view)
+        return ItemViewHolder(view)
     }
 
     fun removeData(position: Int) {
@@ -23,7 +23,7 @@ class MonthCheckAdapter(val dataList : MutableList<String>): RecyclerView.Adapte
         notifyItemRemoved(position)
     }
 
-    override fun onBindViewHolder(holder: MonthAlarmAdapter.ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val text = dataList[position]
     }
 

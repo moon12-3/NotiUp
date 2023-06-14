@@ -1,6 +1,5 @@
 package com.example.notiup
 
-import Alarm
 import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
@@ -19,20 +18,33 @@ import com.example.notiup.databinding.FragmentAlarmBinding
 import com.example.notiup.databinding.FragmentMonthBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 
 
 class AlarmFragment : Fragment() {
 
     lateinit var mainActivity : MainActivity
     lateinit var binding : FragmentAlarmBinding
-    private var alarm = ArrayList<Alarm>()  // 데이터 리스트
-    private var rvAdapter = AlarmAdapter()  // 어댑터
+    //    private var alarm = ArrayList<Alarm>()  // 데이터 리스트
+    private lateinit var rvAdapter : AlarmAdapter  // 어댑터
+    private lateinit var recyclerView : RecyclerView
+
+    private lateinit var auth: FirebaseAuth // 로그인
+    lateinit var db : FirebaseFirestore // DB
 
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         mainActivity = context as MainActivity
+        auth = Firebase.auth
+        db = Firebase.firestore
     }
 
     override fun onCreateView(
@@ -44,32 +56,34 @@ class AlarmFragment : Fragment() {
         binding = FragmentAlarmBinding.bind(view)
 
         // bottom view
+
+        // CHECK BOX bottom view
         val bottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
-        val editBottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
 
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-        val editBottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+        binding.fabEdit.setOnClickListener {
+            val bottomSheet = BottomSheet(mainActivity)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+        // 취소 누르면 숨겨지게
+        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
+        // 알람 추가 bottom View
         bottomSheetDialog.setContentView(bottomSheetView)
         binding.fabFilter.setOnClickListener {
             bottomSheetDialog.show()
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        editBottomSheetDialog.setContentView(editBottomSheetView)
-        binding.fabEdit.setOnClickListener {
-            val bottomSheet = BottomSheet(mainActivity)
-            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+
+        //recyclerView 내용 (알람)
+        recyclerView = view.findViewById(R.id.rv_alarm)
+
+        // 로그인 했는지 관련
+        if(auth.currentUser != null) { // 로그인 했을 시
+            setDB()
         }
-
-//        // 취소 누르면 숨겨지게
-//        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-//            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-//        editBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-//            editBottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_alarm)
 
         // ItemTouchHelper의 callback 함수
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
@@ -128,19 +142,42 @@ class AlarmFragment : Fragment() {
             }
         }
 
-        with(recyclerView) {
-            // 레이아웃매니저 설정
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-            // 어댑터 설정
-            adapter = rvAdapter
-
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        }
+//        with(recyclerView) {
+//            // 레이아웃매니저 설정
+//            layoutManager = LinearLayoutManager(context)
+//            setHasFixedSize(true)
+//            // 어댑터 설정
+//            adapter = rvAdapter
+//
+//            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+//        }
 
         // 리사이클러뷰에 ItemTouchHelper 적용
         ItemTouchHelper(itemCallback).attachToRecyclerView(recyclerView)
         return view
     }
 
+    // DB에서 추가한 알람 불러오는 함수
+    private fun setDB() {
+        val coll = "schedule ${auth.currentUser!!.email}"
+        val docRef = db.collection(coll).orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
+
+        docRef.get()
+            .addOnSuccessListener { result ->
+                val scheduleList = mutableListOf<ScheduleModel>()
+
+                scheduleList.clear()
+                for (document in result) {
+                    val schedule = document.toObject<ScheduleModel>()
+                    scheduleList.add(schedule)
+                    Log.d("mytag", "${document.id} => ${document.data}")
+                }
+
+                rvAdapter = AlarmAdapter(scheduleList)
+
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = rvAdapter
+                recyclerView.setHasFixedSize(true)
+            }
+    }
 }

@@ -6,6 +6,6 @@ import android.os.Bundle
 class AlarmServiceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_alarm_service)
+        setContentView(R.layout.alarm_service)
     }
 }

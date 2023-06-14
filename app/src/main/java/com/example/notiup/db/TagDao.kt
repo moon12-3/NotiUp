@@ -1,3 +1,6 @@
+package com.example.notiup.db
+
+import com.example.notiup.entity.Tag
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -10,10 +13,10 @@ interface TagDao {
     fun tagLiveSelect() : LiveData<MutableList<Tag>>
 
     @Insert
-    suspend fun insert(tag: Tag)
+    fun insert(tag: Tag)
 
     @Query("SELECT * FROM tag")
-    suspend fun getAllTags(): List<Tag>
+    fun getAllTags(): List<Tag>
 
     @Query("DELETE from tag")
     fun deleteAll()
