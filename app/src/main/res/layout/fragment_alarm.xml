@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/back">
+    android:background="#272727">
 
     <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
@@ -16,7 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#272727"
             tools:context=".AlarmFragment">
 
             <TextView
@@ -90,6 +89,7 @@
         app:fabCustomSize="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:layout_gravity="bottom"
         android:scaleType = "fitXY"
@@ -97,4 +97,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="55dp"/>
+
 </FrameLayout>

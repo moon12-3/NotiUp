@@ -159,6 +159,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 else if(binding.noticenter.isChecked) addAlarm2(1)
                 uploadAlarm()
             }
+            dismiss()
         }
 
         return view
