@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
@@ -16,26 +18,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NotiUp"
         tools:targetApi="31">
-        <activity
-            android:name=".AlarmActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-
-        <service
-            android:name=".AlarmService"
-            android:enabled="true"
-            android:exported="true" />
 
         <activity
-            android:name=".AlarmService"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+            android:name=".AlarmServiceActivity"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

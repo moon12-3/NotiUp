@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.example.notiup.Alarm.Receiver.AlarmReceiver
+import com.example.notiup.AlarmServiceActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,10 +31,9 @@ class AlarmFunctions(private val context: Context?){
         }
 
         pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            PendingIntent.getBroadcast(context,alarm_code,receiverIntent,PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, alarm_code, receiverIntent, PendingIntent.FLAG_IMMUTABLE)
         else
-            PendingIntent.getBroadcast(context,alarm_code,receiverIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-
+            PendingIntent.getBroadcast(context, alarm_code, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd H:mm:ss")
         var datetime = Date()

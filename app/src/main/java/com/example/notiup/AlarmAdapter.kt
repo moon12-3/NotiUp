@@ -36,7 +36,6 @@ class AlarmAdapter(val dataList: MutableList<ScheduleModel>) : RecyclerView.Adap
 
     // 레이아웃과 연결
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)  // 어댑터에 연결된 액티비티를 가져옴
         return ViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 

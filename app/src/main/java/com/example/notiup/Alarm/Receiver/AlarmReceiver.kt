@@ -10,9 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.notiup.Alarm.Service.AlarmService
+import com.example.notiup.AlarmServiceActivity
 import com.example.notiup.R
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -40,30 +43,40 @@ class AlarmReceiver : BroadcastReceiver() {
 
 //        val important = if(type==2) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_DEFAULT // HIGH면 headup
 
-        //NotificationChannel 인스턴스를 createNotificationChannel()에 전달하여 앱 알림 채널을 시스템에 등록
-        if(type==2) {
-            Log.d("mytag", "배너 체크 O type : $type")
-            manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_ID,
-                    CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_HIGH
-                )
-            )
-        }
-        else {
-            Log.d("mytag", "배너 체크 X type : $type")
-            manager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_ID2,
-                    CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
-                )
-            )
+        if (type == 0) {
+            val activityIntent = Intent(context, AlarmServiceActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            context.startActivity(activityIntent)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context?.startForegroundService(activityIntent)
+            } else {
+                context?.startService(activityIntent)
+            }
+            return
         }
 
-        if(type==2) builder = NotificationCompat.Builder(context, CHANNEL_ID)
-        else builder = NotificationCompat.Builder(context, CHANNEL_ID2)
+        // 채널 생성 및 builder 초기화
+        if (type == 2) {
+            Log.d("mytag", "배너 체크 O type : $type")
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            manager.createNotificationChannel(channel)
+        } else if (type == 1) {
+            Log.d("mytag", "배너 체크 X type : $type")
+            val channel = NotificationChannel(
+                CHANNEL_ID2,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            builder = NotificationCompat.Builder(context, CHANNEL_ID2)
+            manager.createNotificationChannel(channel)
+        }
 
         val pendingIntent = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.S){
             PendingIntent.getActivity(context,requestCode,intent2,PendingIntent.FLAG_IMMUTABLE); //Activity를 시작하는 인텐트 생성

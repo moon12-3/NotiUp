@@ -166,8 +166,15 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             } else { // 로그인 시
                 uploadAlarm()
             }
-            if(binding.banner.isChecked) addAlarm(2)
-            else if(binding.noticenter.isChecked) addAlarm(1)
+            if(binding.lockscreen.isChecked) {
+                addAlarm(0)
+                if(binding.banner.isChecked) addAlarm(2)
+                else if(binding.noticenter.isChecked) addAlarm(1)
+            } else {
+                if(binding.banner.isChecked) addAlarm(2)
+                else if(binding.noticenter.isChecked) addAlarm(1)
+            }
+
             dismiss()
         }
 
@@ -286,7 +293,8 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
                 }
                 .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
         } else {
-
+            Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+            dismiss()
         }
 
     }
@@ -308,7 +316,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         val eTime = "$ecHour : $ecMinute"
         val repeat = binding.repeat
         val aMemo = binding.etMemo.text.toString()
-
 //        val t_id_fk: Int
 
         val alarm = Alarm(
