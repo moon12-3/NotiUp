@@ -71,12 +71,20 @@ class AlarmFragment : Fragment() {
         // bottom view
 
         // CHECK BOX bottom view
-        val bottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
+        val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
 
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
+        binding.fabEdit.setOnClickListener {
+            val bottomSheet = BottomSheet(mainActivity)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+        // 취소 누르면 숨겨지게
+        checkBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         // 알람 추가 bottom View
-        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.setContentView(checkBottomSheetView)
         binding.fabEdit.setOnClickListener {
 //            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity)

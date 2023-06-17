@@ -26,6 +26,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 
@@ -87,7 +88,11 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         binding = BottomSheetBinding.bind(view)
         db = Firebase.firestore
 
-        selectedDate = Date().toString()
+        val year = LocalDate.now().year.toString()
+        val month = LocalDate.now().monthValue.toString()
+        val day = LocalDate.now().dayOfMonth.toString()
+        selectedDate = "$year-$month-$day"
+
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
@@ -120,7 +125,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         // 나경씨의 코드
         val list: ArrayList<DropdownList> = ArrayList()
 
-        binding = BottomSheetBinding.bind(view)
         auth = Firebase.auth
 
         val a = DropdownList()
@@ -168,35 +172,6 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         }
 
         return view
-    }
-
-    private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
-        val currentUser = auth.currentUser
-        var hour = binding.startTimepicker.hour.toString()
-        var minute = binding.startTimepicker.minute.toString()
-        if(hour.length == 1) hour = "0$hour"
-        if(minute.length == 1) minute = "0$minute"
-
-        if(currentUser != null) {
-            val schedule = ScheduleModel(
-                binding.etTitle.text.toString(),
-                binding.etMemo.text.toString(),
-                selectedDate,
-                "$hour : $minute"
-            )
-
-            db.collection("users").document(currentUser.email!!)
-                .collection("schedule").add(schedule)
-                .addOnSuccessListener {
-                    Log.d("mytag", "DocumentSnapshot successfully written!")
-                    Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-                .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
-        } else {
-
-        }
-
     }
 
     private fun setSetting() {
@@ -271,22 +246,58 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     }
 
+    private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
+        val currentUser = auth.currentUser
+        var hour = binding.startTimepicker.hour.toString()
+        var minute = binding.startTimepicker.minute.toString()
+        if(hour.length == 1) hour = "0$hour"
+        if(minute.length == 1) minute = "0$minute"
+
+        if(currentUser != null) {
+            val schedule = ScheduleModel(
+                binding.etTitle.text.toString(),
+                binding.etMemo.text.toString(),
+                selectedDate,
+                "$hour : $minute"
+            )
+
+            db.collection("users").document(currentUser.email!!)
+                .collection("schedule").add(schedule)
+                .addOnSuccessListener {
+                    Log.d("mytag", "DocumentSnapshot successfully written!")
+                    Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+                .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
+        } else {
+
+        }
+
+    }
+
     private fun uploadAlarm2() {    // 로그인 X시 DB에 올리는 코드
         val atitle = binding.etTitle.text.toString()
         val sdate = "$selectedDate"
         val shour = binding.startTimepicker.hour.toString()
         val sminute = binding.startTimepicker.minute.toString()
-        val stime = "$shour:$sminute:00" // 알람이 울리는 시간
+        val stime = "$shour : $sminute" // 알람이 울리는 시간
         val edate = "$selectedDate"
         val ehour = binding.startTimepicker.hour.toString()
         val eminute = binding.startTimepicker.minute.toString()
-        val etime = "$ehour:$eminute:00"
+        val etime = "$ehour : $eminute"
         val repeat = binding.repeat
         val amemo = binding.etMemo.text.toString()
 
 //        val t_id_fk: Int
 
-        val alarm = Alarm(atitle = atitle, sdate = sdate, stime = stime, edate = edate, etime = etime, repeat = 1, amemo = amemo)
+        val alarm = Alarm(
+            atitle = atitle,
+            sdate = sdate,
+            stime = stime,
+            edate = edate,
+            etime = etime,
+            repeat = 1,
+            amemo = amemo)
         CoroutineScope(Dispatchers.IO).launch{
             alarmDao.insert(alarm)
             Log.d("mytag", "insert 성공")

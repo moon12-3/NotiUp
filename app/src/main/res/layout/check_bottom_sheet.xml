@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/check_bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:background="@color/back">
+    app:theme="@style/AppTheme"
+    android:background="@drawable/round"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
     <LinearLayout
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
