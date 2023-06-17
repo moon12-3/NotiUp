@@ -25,15 +25,11 @@ data class Alarm(
     @PrimaryKey(autoGenerate = true)
     val a_id: Int = 0,
     val atitle: String,
-    val sday: String,
+    val sdate: String,
     val stime: String,
-    val eday: String,
+    val edate: String,
     val etime: String,
     val repeat: Int,
     val amemo: String?,
-//    val lockscreen: Boolean,
-//    val noticenter: Boolean,
-//    val banner: Boolean,
-//    val user_id: String?,
 //    val t_id_fk: Int
 )

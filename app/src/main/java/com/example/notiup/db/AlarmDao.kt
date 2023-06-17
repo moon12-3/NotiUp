@@ -3,8 +3,10 @@ package com.example.notiup.db
 import com.example.notiup.entity.Alarm
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.notiup.ScheduleModel
 
 @Dao
 interface AlarmDao {
@@ -16,4 +18,11 @@ interface AlarmDao {
 
     @Query("DELETE from alarm")
     fun deleteAll()
+
+    @Delete
+    fun delete(alarm: Alarm)
+
+    @Query("SELECT * FROM alarm ORDER BY stime ASC")
+    fun getAllAlarmSortedBySdate(): LiveData<MutableList<Alarm>>
 }
+

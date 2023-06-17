@@ -82,6 +82,8 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         binding = BottomSheetBinding.bind(view)
         db = Firebase.firestore
 
+        selectedDate = Date().toString()
+
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
         binding.startCal.setOnDateChangedListener { _, date, _ ->
@@ -147,16 +149,11 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             }
         }
 
-        val alarm = Alarm(atitle = "a", sday = "1", stime = "2", eday = "3", etime = "4", repeat = 1, amemo = "메모")
         // 저장 버튼
         binding.btnSave.setOnClickListener {
             val currentUser = auth.currentUser
             if(currentUser == null) {   // 로그인 전
-//                addAlarm()
-                CoroutineScope(Dispatchers.IO).launch{
-                    alarmDao.insert(alarm)
-                    Log.d("mytag", "insert 성공!!!!!!!!!!!")
-                }
+                addAlarm()
             } else { // 로그인 시
                 if(binding.banner.isChecked) addAlarm2(2)
                 else if(binding.noticenter.isChecked) addAlarm2(1)
@@ -263,17 +260,30 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     }
 
     private fun addAlarm() {
-        val aname = binding.etTitle.text.toString()
-        val sday = binding.startDay.text.toString()
-        val stime = binding.startTime.text.toString()
-        val eday = binding.endDay.text.toString()
-        val etime = binding.endTime.text.toString()
+        val atitle = binding.etTitle.text.toString()
+        val sdate = "$selectedDate"
+        val shour = binding.startTimepicker.hour.toString()
+        val sminute = binding.startTimepicker.minute.toString()
+        val stime = "$shour:$sminute:00" // 알람이 울리는 시간
+        val edate = "$selectedDate"
+        val ehour = binding.startTimepicker.hour.toString()
+        val eminute = binding.startTimepicker.minute.toString()
+        val etime = "$ehour:$eminute:00"
         val repeat = binding.repeat
         val amemo = binding.etMemo.text.toString()
-//        val lockscreen = binding.lockscreen
-//        val noticenter = binding.noticenter
-//        val banner = binding.banner
+
 //        val t_id_fk: Int
+
+        val alarm = Alarm(atitle = atitle, sdate = sdate, stime = stime, edate = edate, etime = etime, repeat = 1, amemo = amemo)
+        CoroutineScope(Dispatchers.IO).launch{
+            alarmDao.insert(alarm)
+            Log.d("mytag", "insert 성공")
+        }
+
+        val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
+        val alarmCode = random.random()
+        setAlarm(alarmCode, amemo, atitle, stime, 0)
+
     }
 
     private fun addAlarm2(type : Int) {

@@ -1,22 +1,22 @@
 package com.example.notiup
 
-import com.example.notiup.db.AppDatabase
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.ListItemBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.entity.Alarm
 
 
-class AlarmAdapter(val dataList: MutableList<ScheduleModel>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
+class AlarmAdapter2(val dataList: MutableList<Alarm>) : RecyclerView.Adapter<AlarmAdapter2.ViewHolder>() {
 
-    inner class ViewHolder(private val binding : ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(schedule : ScheduleModel) {
-            binding.tvTime.text = schedule.sTime
-            binding.tvAlarmText.text = schedule.aMemo
-            binding.tvDate.text = schedule.sDate
+    inner class ViewHolder(private val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(alarm: Alarm) {
+            binding.tvTime.text = alarm.stime
+            binding.tvAlarmText.text = alarm.amemo
+            binding.tvDate.text = alarm.sdate
         }
     }
 
@@ -30,21 +30,28 @@ class AlarmAdapter(val dataList: MutableList<ScheduleModel>) : RecyclerView.Adap
         notifyItemRemoved(position)
     }
 
-    fun getItem(position: Int): ScheduleModel {
+    fun getItem(position: Int): Alarm {
         return dataList[position]
     }
 
     // 레이아웃과 연결
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)  // 어댑터에 연결된 액티비티를 가져옴
-        return ViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val alarm = dataList[position]
+        val binding = ListItemBinding.bind(holder.itemView)  // ViewHolder에 바인딩 객체 전달
+        val viewHolder = ViewHolder(binding)
+        viewHolder.bind(alarm)
     }
 
     // dataSet의 사이즈 리턴
     override fun getItemCount(): Int = dataList.size
 
-    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val rv_alarm = itemView
+    inner class CustomViewHolder(private val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        val rv_alarm = binding.root
     }
 
     fun removeItem(position: Int) {
@@ -54,8 +61,6 @@ class AlarmAdapter(val dataList: MutableList<ScheduleModel>) : RecyclerView.Adap
     fun removeAllItem() {
         dataList.clear()
     }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(dataList[position])
 
     override fun getItemViewType(position: Int): Int = R.layout.list_item
 

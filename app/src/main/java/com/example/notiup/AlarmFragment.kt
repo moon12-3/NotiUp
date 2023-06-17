@@ -1,6 +1,5 @@
 package com.example.notiup
 
-import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
@@ -10,33 +9,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.FragmentAlarmBinding
-import com.example.notiup.databinding.FragmentMonthBinding
+import com.example.notiup.db.AlarmDao
+import com.example.notiup.db.AppDatabase
+import com.example.notiup.entity.Alarm
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 
 class AlarmFragment : Fragment() {
 
     lateinit var mainActivity : MainActivity
     lateinit var binding : FragmentAlarmBinding
-    //    private var alarm = ArrayList<Alarm>()  // 데이터 리스트
-    private lateinit var rvAdapter : AlarmAdapter  // 어댑터
+    private lateinit var rvAdapter : AlarmAdapter
+    private lateinit var rvAdapter2 : AlarmAdapter2
     private lateinit var recyclerView : RecyclerView
+    private lateinit var alarm: LiveData<MutableList<Alarm>>
 
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
+    private lateinit var alarmDao: AlarmDao
 
 
     override fun onAttach(context: Context) {
@@ -54,6 +59,8 @@ class AlarmFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_alarm, container, false)
 
         binding = FragmentAlarmBinding.bind(view)
+        val roomDb = AppDatabase.getInstance(requireContext())
+        alarmDao = roomDb.alarmDao()
 
         // bottom view
 
@@ -82,6 +89,8 @@ class AlarmFragment : Fragment() {
 
         // 로그인 했는지 관련
         if(auth.currentUser != null) { // 로그인 했을 시
+            setDB2()
+        } else {
             setDB()
         }
 
@@ -98,9 +107,21 @@ class AlarmFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val scheduleToDelete: ScheduleModel = rvAdapter.getItem(position)
+                val alarmToDelete: Alarm = rvAdapter2.getItem(position)
+
                 // 해당 위치의 데이터 삭제
                 rvAdapter.removeData(viewHolder.layoutPosition)
+
+                if(auth.currentUser != null) { // 로그인 했을 시
+
+                } else {
+                    alarmDao.delete(alarmToDelete)
+                }
+
             }
+
 
             // 꾹 눌러 이동할 수 없도록 함
             override fun isLongPressDragEnabled(): Boolean {
@@ -159,6 +180,21 @@ class AlarmFragment : Fragment() {
 
     // DB에서 추가한 알람 불러오는 함수
     private fun setDB() {
+        alarmDao.getAllAlarmSortedBySdate().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            var alarmList: MutableList<Alarm> = mutableListOf()
+            for (alarm in it) {
+                alarmList.add(Alarm(alarm.a_id, alarm.atitle, alarm.sdate, alarm.stime, alarm.edate, alarm.edate, alarm.repeat, alarm.amemo))
+            }
+
+            rvAdapter2 = AlarmAdapter2(alarmList)
+
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = rvAdapter2
+            recyclerView.setHasFixedSize(true)
+        })
+    }
+
+    private fun setDB2() {
         val coll = "schedule ${auth.currentUser!!.email}"
         val docRef = db.collection(coll).orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
 
