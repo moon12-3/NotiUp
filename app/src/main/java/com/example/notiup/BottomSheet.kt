@@ -2,12 +2,15 @@ package com.example.notiup
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
 import com.example.notiup.databinding.BottomSheetBinding
@@ -66,13 +69,15 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         }
     }
 
+
+    override fun getTheme(): Int = R.style.AppBottomSheetDialogTheme
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?
     {
-
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
 
@@ -153,7 +158,9 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         binding.btnSave.setOnClickListener {
             val currentUser = auth.currentUser
             if(currentUser == null) {   // 로그인 전
-                addAlarm()
+                if(binding.banner.isChecked) addAlarm(2)
+                else if(binding.noticenter.isChecked) addAlarm(1)
+//                uploadAlarm()
             } else { // 로그인 시
                 if(binding.banner.isChecked) addAlarm2(2)
                 else if(binding.noticenter.isChecked) addAlarm2(1)
@@ -166,26 +173,32 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     }
 
     private fun uploadAlarm() {
+        val currentUser = auth.currentUser
         var hour = binding.startTimepicker.hour.toString()
         var minute = binding.startTimepicker.minute.toString()
         if(hour.length == 1) hour = "0$hour"
         if(minute.length == 1) minute = "0$minute"
-        val schedule = ScheduleModel(
-            binding.etTitle.text.toString(),
-            binding.etMemo.text.toString(),
-            selectedDate,
-            "$hour : $minute"
-        )
 
-        val coll = "schedule ${auth.currentUser!!.email}"
-        db.collection(coll).add(schedule)
-            .addOnSuccessListener {
-                Log.d("mytag", "DocumentSnapshot successfully written!")
-                Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
-                dismiss()
-                (activity as MainActivity).changeFragment(1)
-            }
-            .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
+        if(currentUser == null) {
+            val schedule = ScheduleModel(
+                binding.etTitle.text.toString(),
+                binding.etMemo.text.toString(),
+                selectedDate,
+                "$hour : $minute"
+            )
+            val coll = "schedule ${auth.currentUser!!.email}"
+            db.collection(coll).add(schedule)
+                .addOnSuccessListener {
+                    Log.d("mytag", "DocumentSnapshot successfully written!")
+                    Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                    (activity as MainActivity).changeFragment(1)
+                }
+                .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
+        } else {
+
+        }
+
     }
 
     private fun setSetting() {
@@ -260,7 +273,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     }
 
-    private fun addAlarm() {
+    private fun addAlarm(type : Int) {
         val atitle = binding.etTitle.text.toString()
         val sdate = "$selectedDate"
         val shour = binding.startTimepicker.hour.toString()
@@ -283,7 +296,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
         val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
         val alarmCode = random.random()
-        setAlarm(alarmCode, amemo, atitle, stime, 0)
+        setAlarm(alarmCode, amemo, atitle, stime, type)
 
     }
 
@@ -303,4 +316,5 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     private fun setAlarm(alarmCode : Int, content : String, text : String, time : String, type : Int){
         alarmFunctions.callAlarm(time, alarmCode, text, content, type)
     }
+
 }
