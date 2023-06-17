@@ -246,12 +246,28 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     }
 
+    private fun changeHour(hour: String): String {
+        if(hour.length == 1) {
+            return "0$hour"
+        } else {
+            return "$hour"
+        }
+    }
+
+    private fun changeMinute(minute: String): String {
+        if(minute.length == 1) {
+            return "0$minute"
+        } else {
+            return "$minute"
+        }
+    }
+
     private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
         val currentUser = auth.currentUser
         var hour = binding.startTimepicker.hour.toString()
         var minute = binding.startTimepicker.minute.toString()
-        if(hour.length == 1) hour = "0$hour"
-        if(minute.length == 1) minute = "0$minute"
+        changeHour(hour)
+        changeMinute(minute)
 
         if(currentUser != null) {
             val schedule = ScheduleModel(
@@ -276,28 +292,33 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     }
 
     private fun uploadAlarm2() {    // 로그인 X시 DB에 올리는 코드
-        val atitle = binding.etTitle.text.toString()
-        val sdate = "$selectedDate"
-        val shour = binding.startTimepicker.hour.toString()
-        val sminute = binding.startTimepicker.minute.toString()
-        val stime = "$shour : $sminute" // 알람이 울리는 시간
-        val edate = "$selectedDate"
-        val ehour = binding.startTimepicker.hour.toString()
-        val eminute = binding.startTimepicker.minute.toString()
-        val etime = "$ehour : $eminute"
+        val aTitle = binding.etTitle.text.toString()
+        val sDate = "$selectedDate"
+        val sHour = binding.startTimepicker.hour.toString()
+        val sMinute = binding.startTimepicker.minute.toString()
+        val scHour = changeHour(sHour)
+        val scMinute = changeMinute(sMinute)
+        val sTime = "$scHour : $scMinute" // 알람이 울리는 시간
+
+        val eDate = "$selectedDate"
+        val eHour = binding.startTimepicker.hour.toString()
+        val eMinute = binding.startTimepicker.minute.toString()
+        val ecHour = changeHour(eHour)
+        val ecMinute = changeMinute(eMinute)
+        val eTime = "$ecHour : $ecMinute"
         val repeat = binding.repeat
-        val amemo = binding.etMemo.text.toString()
+        val aMemo = binding.etMemo.text.toString()
 
 //        val t_id_fk: Int
 
         val alarm = Alarm(
-            atitle = atitle,
-            sdate = sdate,
-            stime = stime,
-            edate = edate,
-            etime = etime,
+            atitle = aTitle,
+            sdate = sDate,
+            stime = sTime,
+            edate = eDate,
+            etime = eTime,
             repeat = 1,
-            amemo = amemo)
+            amemo = aMemo)
         CoroutineScope(Dispatchers.IO).launch{
             alarmDao.insert(alarm)
             Log.d("mytag", "insert 성공")
