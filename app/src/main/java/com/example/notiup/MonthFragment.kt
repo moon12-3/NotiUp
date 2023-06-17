@@ -12,11 +12,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CalendarView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.TimePicker
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -24,31 +19,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.FragmentMonthBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
-import com.prolificinteractive.materialcalendarview.format.TitleFormatter
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
-import kotlin.collections.HashSet
 
 class MonthFragment : Fragment() {
 
@@ -229,17 +212,13 @@ class MonthFragment : Fragment() {
         return view
     }
 
-    // 선택된 날짜에 해당하는 일정 목록 가져오기
-    private fun callList() {
-
-    }
-
     // DB에서 추가한 알람 불러오는 함수
     private fun setDB() {
         val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val coll = "schedule ${auth.currentUser!!.email}"
-            val docRef = db.collection(coll).whereEqualTo("sdate", selectedDate)
+        if (currentUser != null) {  // 로그인 되어있는 경우
+
+            val docRef = db.collection("users").document(currentUser.email!!)
+                .collection("schedule").whereEqualTo("sdate", selectedDate)    // 선택된 날짜만 가져오도록
 
             docRef.get()
                 .addOnSuccessListener { result ->

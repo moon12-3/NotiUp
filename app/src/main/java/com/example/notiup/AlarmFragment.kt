@@ -1,5 +1,6 @@
 package com.example.notiup
 
+import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
@@ -8,10 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.setFragmentResult
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -80,9 +85,10 @@ class AlarmFragment : Fragment() {
 
         // 알람 추가 bottom View
         bottomSheetDialog.setContentView(bottomSheetView)
-        binding.fabFilter.setOnClickListener {
-            bottomSheetDialog.show()
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.fabEdit.setOnClickListener {
+            setFragmentResult("requestKey", bundleOf("bundleKey" to CalendarDay.today()))
+            val bottomSheet = BottomSheet(mainActivity)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 
         //recyclerView 내용 (알람)
@@ -197,8 +203,8 @@ class AlarmFragment : Fragment() {
     }
 
     private fun setDB2() {
-        val coll = "schedule ${auth.currentUser!!.email}"
-        val docRef = db.collection(coll).orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
+        val docRef = db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule").orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
 
         docRef.get()
             .addOnSuccessListener { result ->

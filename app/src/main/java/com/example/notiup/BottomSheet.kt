@@ -158,41 +158,39 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         binding.btnSave.setOnClickListener {
             val currentUser = auth.currentUser
             if(currentUser == null) {   // 로그인 전
-                if(binding.banner.isChecked) addAlarm(2)
-                else if(binding.noticenter.isChecked) addAlarm(1)
-//                uploadAlarm()
+                uploadAlarm2()
             } else { // 로그인 시
-                if(binding.banner.isChecked) addAlarm2(2)
-                else if(binding.noticenter.isChecked) addAlarm2(1)
                 uploadAlarm()
             }
+            if(binding.banner.isChecked) addAlarm(2)
+            else if(binding.noticenter.isChecked) addAlarm(1)
             dismiss()
         }
 
         return view
     }
 
-    private fun uploadAlarm() {
+    private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
         val currentUser = auth.currentUser
         var hour = binding.startTimepicker.hour.toString()
         var minute = binding.startTimepicker.minute.toString()
         if(hour.length == 1) hour = "0$hour"
         if(minute.length == 1) minute = "0$minute"
 
-        if(currentUser == null) {
+        if(currentUser != null) {
             val schedule = ScheduleModel(
                 binding.etTitle.text.toString(),
                 binding.etMemo.text.toString(),
                 selectedDate,
                 "$hour : $minute"
             )
-            val coll = "schedule ${auth.currentUser!!.email}"
-            db.collection(coll).add(schedule)
+
+            db.collection("users").document(currentUser.email!!)
+                .collection("schedule").add(schedule)
                 .addOnSuccessListener {
                     Log.d("mytag", "DocumentSnapshot successfully written!")
                     Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
                     dismiss()
-                    (activity as MainActivity).changeFragment(1)
                 }
                 .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
         } else {
@@ -273,7 +271,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     }
 
-    private fun addAlarm(type : Int) {
+    private fun uploadAlarm2() {    // 로그인 X시 DB에 올리는 코드
         val atitle = binding.etTitle.text.toString()
         val sdate = "$selectedDate"
         val shour = binding.startTimepicker.hour.toString()
@@ -293,14 +291,9 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             alarmDao.insert(alarm)
             Log.d("mytag", "insert 성공")
         }
-
-        val random = (1..100000) // 1~100000 범위에서 알람코드 랜덤으로 생성 (추후 다른 방법으로 변경 필수!!겹칠 가능성이 존재함...)
-        val alarmCode = random.random()
-        setAlarm(alarmCode, amemo, atitle, stime, type)
-
     }
 
-    private fun addAlarm2(type : Int) {
+    private fun addAlarm(type : Int) {  // 휴대폰에 울릴 알람 추가하는 코드
         val text = binding.etTitle.text.toString()
         val content = binding.etMemo.text.toString()
 

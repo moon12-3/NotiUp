@@ -34,6 +34,8 @@ class MonthAlarmAdapter(val dataList : MutableList<ScheduleModel>, val idList : 
         notifyItemRemoved(position)
     }
 
+
+
     fun delete(position: Int) {
         val coll = "schedule ${auth.currentUser!!.email}"
 
