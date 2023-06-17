@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -108,16 +109,17 @@ class AlarmFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val scheduleToDelete: ScheduleModel = rvAdapter.getItem(position)
                 val alarmToDelete: Alarm = rvAdapter2.getItem(position)
 
                 // 해당 위치의 데이터 삭제
-                rvAdapter.removeData(viewHolder.layoutPosition)
+                rvAdapter2.removeData(viewHolder.layoutPosition)
 
                 if(auth.currentUser != null) { // 로그인 했을 시
 
                 } else {
-                    alarmDao.delete(alarmToDelete)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        alarmDao.delete(alarmToDelete)
+                    }
                 }
 
             }
