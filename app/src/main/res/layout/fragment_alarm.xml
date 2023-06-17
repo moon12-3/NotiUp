@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="68dp"
-                android:text="ㅇㅇㅇ님의 알람"
+                android:text="Guest님의 알람"
                 android:textColor="#FFFFFF"
                 android:textSize="26sp"
                 android:textStyle="bold"
