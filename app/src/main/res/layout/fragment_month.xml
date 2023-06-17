@@ -75,8 +75,8 @@
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#474747"
             android:src="@drawable/s"
+            app:backgroundTint="#434343"
             app:fabCustomSize="50dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -88,8 +88,8 @@
             android:layout_gravity="end"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="#474747"
             android:src="@drawable/fab_edit"
+            app:backgroundTint="#434343"
             app:fabCustomSize="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
