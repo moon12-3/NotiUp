@@ -1,6 +1,5 @@
 package com.example.notiup
 
-import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
@@ -12,10 +11,8 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.fragment.app.setFragmentResult
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +20,7 @@ import com.example.notiup.databinding.FragmentAlarmBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
+import com.example.notiup.viewModel.ScheduleModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -31,9 +29,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class AlarmFragment : Fragment() {
@@ -72,12 +71,7 @@ class AlarmFragment : Fragment() {
 
         // CHECK BOX bottom view
         val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
-
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-        binding.fabEdit.setOnClickListener {
-            val bottomSheet = BottomSheet(mainActivity)
-            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
-        }
         // 취소 누르면 숨겨지게
         checkBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -86,8 +80,10 @@ class AlarmFragment : Fragment() {
         // 알람 추가 bottom View
         bottomSheetDialog.setContentView(checkBottomSheetView)
         binding.fabEdit.setOnClickListener {
-//            setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
-            val bottomSheet = BottomSheet(mainActivity)
+            val today = SimpleDateFormat("yyyy-M-d")
+            val todayText = today.format(Date())
+            setFragmentResult("requestKey", bundleOf("bundleKey" to todayText))
+            val bottomSheet = BottomSheet(mainActivity, 2)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 
@@ -114,17 +110,16 @@ class AlarmFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val alarmToDelete: Alarm = rvAdapter2.getItem(position)
-
-                // 해당 위치의 데이터 삭제
-                rvAdapter2.removeData(viewHolder.layoutPosition)
-
                 if(auth.currentUser != null) { // 로그인 했을 시
-
+                    rvAdapter.removeData(viewHolder.layoutPosition)
                 } else {
+                    val position = viewHolder.adapterPosition
+                    val alarmToDelete: Alarm = rvAdapter2.getItem(position)
+
                     lifecycleScope.launch(Dispatchers.IO) {
                         alarmDao.delete(alarmToDelete)
+                        // 해당 위치의 데이터 삭제
+                        rvAdapter2.removeData(viewHolder.layoutPosition)
                     }
                 }
 
@@ -209,15 +204,15 @@ class AlarmFragment : Fragment() {
         docRef.get()
             .addOnSuccessListener { result ->
                 val scheduleList = mutableListOf<ScheduleModel>()
-
-                scheduleList.clear()
+                val idList = mutableListOf<String>()
                 for (document in result) {
                     val schedule = document.toObject<ScheduleModel>()
                     scheduleList.add(schedule)
+                    idList.add(document.id)
                     Log.d("mytag", "${document.id} => ${document.data}")
                 }
 
-                rvAdapter = AlarmAdapter(scheduleList)
+                rvAdapter = AlarmAdapter(scheduleList, idList)
 
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = rvAdapter

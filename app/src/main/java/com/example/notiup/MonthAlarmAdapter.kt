@@ -2,10 +2,10 @@ package com.example.notiup
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.AlarmItemBinding
+import com.example.notiup.viewModel.ScheduleModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -20,14 +20,9 @@ class MonthAlarmAdapter(val dataList : MutableList<ScheduleModel>, val idList : 
     val db = Firebase.firestore
     val auth = Firebase.auth
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // 한 항목을 표시할 레이아웃 관련 뷰를 만들어 줌
-        // (viewType값이 바로 getItemViewType에서 반환한 레이아웃 리소스 식별자)
-        val view = LayoutInflater.from(parent.context)
-            .inflate(viewType, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
+        = ViewHolder(AlarmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-        return ViewHolder(AlarmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-    }
 
     fun removeData(position: Int) {
         dataList.removeAt(position)
@@ -37,12 +32,13 @@ class MonthAlarmAdapter(val dataList : MutableList<ScheduleModel>, val idList : 
 
 
     fun delete(position: Int) {
-        val coll = "schedule ${auth.currentUser!!.email}"
-
-        db.collection(coll).document(idList[position])
+        Log.d("mytag", idList[position])
+        db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule").document(idList[position])
             .delete()
             .addOnSuccessListener {
                 Log.d("mytag", "DocumentSnapsWhot successfully deleted!")
+                notifyItemRemoved(position)
                 idList.removeAt(position)
             }
             .addOnFailureListener { e -> Log.w("mytag", "Error deleting document", e) }

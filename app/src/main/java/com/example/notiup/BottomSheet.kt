@@ -2,7 +2,6 @@ package com.example.notiup
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +16,7 @@ import com.example.notiup.databinding.BottomSheetBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
+import com.example.notiup.viewModel.ScheduleModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -30,7 +30,7 @@ import java.time.LocalDate
 import java.util.*
 
 
-class BottomSheet(context : Context) : BottomSheetDialogFragment() {
+class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment() {
 
     lateinit var binding : BottomSheetBinding
     private lateinit var spinner : Spinner
@@ -39,6 +39,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     private lateinit var db : FirebaseFirestore
     private lateinit var selectedDate : String
     private lateinit var alarmDao: AlarmDao
+    private val fNumber = fNumber
 
     private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
 
@@ -119,7 +120,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         // 취소 누르면 숨겨지게
         binding.cancel.setOnClickListener {
             dismiss()
-            (activity as MainActivity).changeFragment(1)
+            (activity as MainActivity).changeFragment(fNumber)
         }
 
         // 나경씨의 코드
@@ -176,6 +177,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             }
 
             dismiss()
+            (activity as MainActivity).changeFragment(fNumber)
         }
 
         return view
@@ -271,10 +273,8 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
         val currentUser = auth.currentUser
-        var hour = binding.startTimepicker.hour.toString()
-        var minute = binding.startTimepicker.minute.toString()
-        changeHour(hour)
-        changeMinute(minute)
+        var hour = changeHour(binding.startTimepicker.hour.toString())
+        var minute = changeMinute(binding.startTimepicker.minute.toString())
 
         if(currentUser != null) {
             val schedule = ScheduleModel(

@@ -1,4 +1,4 @@
-package com.example.notiup
+package com.example.notiup.viewModel
 
 data class UserModel(
     var name: String,
