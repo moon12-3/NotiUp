@@ -21,7 +21,10 @@ interface AlarmDao {
     @Delete
     fun delete(alarm: Alarm)
 
-    @Query("SELECT * FROM alarm ORDER BY sdate, stime ASC ")
+    @Query("SELECT * FROM alarm ORDER BY sdate, stime ASC")
     fun getAllAlarmSortedBySdate(): LiveData<MutableList<Alarm>>
+
+    @Query("SELECT * FROM alarm ORDER BY sdate, stime DESC")
+    fun getAllAlarmSortedBySdateDesc(): LiveData<MutableList<Alarm>>
 }
 

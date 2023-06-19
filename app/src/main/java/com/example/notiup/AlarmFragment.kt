@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -88,7 +89,6 @@ class AlarmFragment : Fragment() {
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 
-
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.rv_alarm)
 
@@ -96,7 +96,7 @@ class AlarmFragment : Fragment() {
         if(auth.currentUser != null) { // 로그인 했을 시
             setDB2()
         } else {
-            setDB()
+            setDB(0)
         }
 
         // ItemTouchHelper의 callback 함수
@@ -184,8 +184,13 @@ class AlarmFragment : Fragment() {
     }
 
     // DB에서 추가한 알람 불러오는 함수
-    private fun setDB() {
-        alarmDao.getAllAlarmSortedBySdate().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+    fun setDB(sortType: Int) {
+        val sortedAlarms = when (sortType) {
+            0 -> alarmDao.getAllAlarmSortedBySdate()
+            1 -> alarmDao.getAllAlarmSortedBySdateDesc()
+            else -> alarmDao.getAllAlarmSortedBySdate() // 기본적으로 오름차순으로 정렬
+        }
+        sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             var alarmList: MutableList<Alarm> = mutableListOf()
             for (alarm in it) {
                 alarmList.add(Alarm(alarm.a_id, alarm.atitle, alarm.sdate, alarm.stime, alarm.edate, alarm.edate, alarm.repeat, alarm.amemo))
