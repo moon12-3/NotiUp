@@ -9,6 +9,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -37,10 +39,16 @@ import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
+import com.prolificinteractive.materialcalendarview.spans.DotSpan
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Month
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MonthFragment : Fragment() {
 
@@ -126,6 +134,9 @@ class MonthFragment : Fragment() {
             setHeaderTextAppearance(R.style.CalendarWidgetHeader)
             setTopbarVisible(false)     // Topbar안보이게
         }
+
+        dotDecorator()
+
 
         // 달력 날짜 선택 Listener
         binding.materialCalendar.setOnDateChangedListener { _, date, _ ->
@@ -313,6 +324,28 @@ class MonthFragment : Fragment() {
         }
     }
 
+    fun dotDecorator() {
+        val docRef = db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule")
+        CoroutineScope(Dispatchers.IO).launch {
+            docRef.get()
+                .addOnSuccessListener { result ->
+                    val scheduleList = mutableListOf<ScheduleModel>()
+                    for (document in result) {
+                        val schedule = document.toObject<ScheduleModel>()
+                        val date = schedule.sDate.split("-")
+                        var cal = CalendarDay.from(date[0].toInt(), date[1].toInt()-1, date[2].toInt())
+                        Log.d("mytag", "$cal")
+                        binding.materialCalendar
+                            .addDecorator(
+                                EventDecorator(
+                                    Color.parseColor("#A4A4A4"),
+                                    Collections.singleton(cal)))
+                        }
+                    }
+            }
+        }
+
     inner class WeekdayDecorator : DayViewDecorator {
 
         private val calendar = Calendar.getInstance()
@@ -328,4 +361,25 @@ class MonthFragment : Fragment() {
         }
 
     }
+
+    inner class EventDecorator() : DayViewDecorator {
+
+        private var color = 0
+        private lateinit var dates : HashSet<CalendarDay>
+
+        constructor(color: Int, dates: Collection<CalendarDay>) : this() {
+            this.color=color
+            this.dates=HashSet(dates)
+        }
+
+        override fun shouldDecorate(day: CalendarDay?): Boolean {
+            return dates.contains(day)
+        }
+
+        override fun decorate(view: DayViewFacade?) {
+            view?.addSpan(DotSpan(7F, color))
+        }
+    }
 }
+
+
