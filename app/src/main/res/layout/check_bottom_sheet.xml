@@ -11,7 +11,6 @@
     android:background="@drawable/round"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
-
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
@@ -27,7 +26,7 @@
             android:textColor="#E7FE54"
             android:textSize="20sp"
             android:text="취소"
-            android:layout_marginLeft="25dp" />
+            android:layout_marginLeft="25dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,9 +34,9 @@
             android:text="정렬 기준"
             android:textSize="18dp"
             android:textStyle="bold"
-            android:layout_marginLeft="105dp"
-            />
+            android:layout_marginLeft="105dp"/>
         <TextView
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#E7FE54"
@@ -60,8 +59,9 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect"
+            android:checked="true"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="오늘 알람 보기"
             android:textColor="@color/white"
             android:textSize="16dp"/>
@@ -70,7 +70,7 @@
             android:text="전체 알람 보기"
             android:id="@+id/all"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -78,6 +78,7 @@
             android:paddingRight="20dp"
             android:layout_marginTop="2dp"
             android:background="@drawable/rect3"
+            android:checked="false"
             android:textColor="@color/white"
             android:textSize="16dp"/>
 
@@ -90,26 +91,30 @@
         android:layout_height="400dp">
 
         <RadioButton
+            android:id="@+id/time_desc"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect"
+            android:checked="true"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="시간 내림차순"
             android:textColor="@color/white"
             android:textSize="16dp"/>
         <RadioButton
+            android:id="@+id/time_asc"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect2"
+            android:checked="false"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="시간 오름차순"
             android:textColor="@color/white"
             android:layout_marginTop="2dp"
@@ -121,8 +126,9 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect2"
+            android:checked="false"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="날짜 내림차순"
             android:textColor="@color/white"
             android:layout_marginTop="2dp"
@@ -134,8 +140,9 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect2"
+            android:checked="false"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="날짜 오름차순"
             android:textColor="@color/white"
             android:layout_marginTop="2dp"
@@ -147,8 +154,9 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:background="@drawable/rect3"
+            android:checked="false"
             android:button="@null"
-            android:drawableRight="@drawable/notcheck"
+            android:drawableRight="@drawable/selector_clicked"
             android:text="태그 순"
             android:textColor="@color/white"
             android:layout_marginTop="2dp"

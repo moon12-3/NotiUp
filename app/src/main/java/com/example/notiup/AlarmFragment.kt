@@ -72,10 +72,6 @@ class AlarmFragment : Fragment() {
         // CHECK BOX bottom view
         val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-        // 취소 누르면 숨겨지게
-        checkBottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
 
         // 알람 추가 bottom View
         bottomSheetDialog.setContentView(checkBottomSheetView)
@@ -86,6 +82,12 @@ class AlarmFragment : Fragment() {
             val bottomSheet = BottomSheet(mainActivity, 2)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
+        // 알람 필터 bottom View
+        binding.fabFilter.setOnClickListener {
+            val bottomSheet = CheckBottomSheet()
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+
 
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.rv_alarm)

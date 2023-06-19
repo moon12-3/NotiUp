@@ -307,7 +307,6 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
         val scHour = changeHour(sHour)
         val scMinute = changeMinute(sMinute)
         val sTime = "$scHour : $scMinute" // 알람이 울리는 시간
-
         val eDate = "$selectedDate"
         val eHour = binding.startTimepicker.hour.toString()
         val eMinute = binding.startTimepicker.minute.toString()
