@@ -3,10 +3,10 @@ package com.example.notiup
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import com.example.notiup.databinding.CheckBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -61,16 +61,17 @@ class CheckBottomSheet : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        val alarmFragment = targetFragment as AlarmFragment?
+        val bundle = Bundle()
+
         binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.today -> {
-                    binding.today.isChecked = true
-                    binding.all.isChecked = false
+                    Log.d("mytag", "today")
+                    bundle.putInt("type", 0)
                 }
                 R.id.all -> {
-                    binding.today.isChecked = false
-                    binding.all.isChecked = true
+                    Log.d("mytag", "all")
+                    bundle.putInt("type", 1)
                 }
             }
         }
@@ -78,17 +79,18 @@ class CheckBottomSheet : BottomSheetDialogFragment() {
         binding.radioGroup2.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.time_desc -> {
-                    binding.timeDesc.isChecked = true
-                    binding.timeAsc.isChecked = false
-                    alarmFragment?.setDB(0)
+                    Log.d("mytag", "time_desc")
+                    bundle.putInt("type2", 0)
                 }
                 R.id.time_asc -> {
-                    binding.timeDesc.isChecked = false
-                    binding.timeAsc.isChecked = true
-                    alarmFragment?.setDB(1)
+                    Log.d("mytag", "time_asc")
+                    bundle.putInt("type2", 1)
                 }
             }
         }
+
+        val fragment = AlarmFragment()
+        fragment.arguments = bundle
 
         binding.btnSave.setOnClickListener {
             val checkedId = binding.radioGroup.checkedRadioButtonId

@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 
 class AlarmFragment : Fragment() {
@@ -44,7 +45,9 @@ class AlarmFragment : Fragment() {
     private lateinit var rvAdapter2 : AlarmAdapter2
     private lateinit var recyclerView : RecyclerView
     private lateinit var alarm: LiveData<MutableList<Alarm>>
-
+    private var receivedBundle: Bundle? = null
+    private var type: Int? = null
+    private var type2: Int? = null
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
     private lateinit var alarmDao: AlarmDao
@@ -69,7 +72,6 @@ class AlarmFragment : Fragment() {
         alarmDao = roomDb.alarmDao()
 
         // bottom view
-
         // CHECK BOX bottom view
         val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
@@ -92,11 +94,16 @@ class AlarmFragment : Fragment() {
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.rv_alarm)
 
+        receivedBundle = arguments
+
+        val type = receivedBundle?.getInt("type", 0) ?: 0
+        val type2 = receivedBundle?.getInt("type2", 0) ?: 0
+
         // 로그인 했는지 관련
         if(auth.currentUser != null) { // 로그인 했을 시
             setDB2()
         } else {
-            setDB(0)
+            setDB(type, type2)
         }
 
         // ItemTouchHelper의 callback 함수
@@ -184,12 +191,9 @@ class AlarmFragment : Fragment() {
     }
 
     // DB에서 추가한 알람 불러오는 함수
-    fun setDB(sortType: Int) {
-        val sortedAlarms = when (sortType) {
-            0 -> alarmDao.getAllAlarmSortedBySdate()
-            1 -> alarmDao.getAllAlarmSortedBySdateDesc()
-            else -> alarmDao.getAllAlarmSortedBySdate() // 기본적으로 오름차순으로 정렬
-        }
+    fun setDB(sortType: Int, sortType2: Int) {
+        val alarmRepository = AlarmDao.AlarmRepository(alarmDao)
+        val sortedAlarms = alarmRepository.getAlarmListBasedOnInputNumber(sortType, sortType2)
         sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             var alarmList: MutableList<Alarm> = mutableListOf()
             for (alarm in it) {
@@ -225,5 +229,10 @@ class AlarmFragment : Fragment() {
                 recyclerView.adapter = rvAdapter
                 recyclerView.setHasFixedSize(true)
             }
+    }
+
+    fun setType(getType: Int, getType2: Int) {
+        type = getType
+        type2 = getType2
     }
 }

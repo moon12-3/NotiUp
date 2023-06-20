@@ -250,6 +250,8 @@ class MonthFragment : Fragment() {
                 )
             }
         }
+
+        // 체크 리스트 삭제
         val itemCallback2 = object : ItemTouchHelper.SimpleCallback (
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
         ){
@@ -263,8 +265,8 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-                cAdapter.removeData(viewHolder.layoutPosition)
-                cAdapter.delete(viewHolder.layoutPosition)
+//                cAdapter.removeData(viewHolder.layoutPosition)
+//                cAdapter.delete(viewHolder.layoutPosition)
             }
 
             // 꾹 눌러 이동할 수 없도록 함
