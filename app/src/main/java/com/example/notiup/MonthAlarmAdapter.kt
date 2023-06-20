@@ -29,8 +29,6 @@ class MonthAlarmAdapter(val dataList : MutableList<ScheduleModel>, val idList : 
         notifyItemRemoved(position)
     }
 
-
-
     fun delete(position: Int) {
         Log.d("mytag", idList[position])
         db.collection("users").document(auth.currentUser!!.email!!)

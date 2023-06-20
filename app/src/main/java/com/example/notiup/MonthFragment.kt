@@ -61,6 +61,7 @@ class MonthFragment : Fragment() {
     private lateinit var selectedDate: String // 달력에서 선택한 날짜
 
     private lateinit var recyclerView : RecyclerView
+    private lateinit var cRecyclerView : RecyclerView
     private lateinit var rvAdapter : MonthAlarmAdapter
     private lateinit var cAdapter : MonthCheckAdapter
 
@@ -122,6 +123,7 @@ class MonthFragment : Fragment() {
 
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.fragment_container)
+        cRecyclerView = binding.checklistContainer
 
         // DB 가져오기
         setDB()
@@ -248,8 +250,81 @@ class MonthFragment : Fragment() {
                 )
             }
         }
+        val itemCallback2 = object : ItemTouchHelper.SimpleCallback (
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
+        ){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // 해당 위치의 데이터 삭제
+                cAdapter.removeData(viewHolder.layoutPosition)
+                cAdapter.delete(viewHolder.layoutPosition)
+            }
+
+            // 꾹 눌러 이동할 수 없도록 함
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val itemView = viewHolder.itemView
+                    val itemHeight = itemView.height
+
+                    val textPadding = 40f // 텍스트 패딩 값
+
+                    if (dX < 0) {   // 스와이프를 왼쪽으로 할 수록 -dX
+
+                        // Draw the background
+                        val backgroundPaint = Paint()
+                        backgroundPaint.color = Color.parseColor("#CF6262")
+                        val backgroundLeft = itemView.right + dX.toInt()
+                        val backgroundTop = itemView.top
+                        val backgroundRight = itemView.right
+                        val backgroundBottom = itemView.bottom
+                        c.drawRect(backgroundLeft.toFloat(), backgroundTop.toFloat(), backgroundRight.toFloat(), backgroundBottom.toFloat(), backgroundPaint)
+
+                        // Draw the text
+                        val text = "삭제"
+                        val textPaint = Paint()
+                        textPaint.color = Color.WHITE
+                        textPaint.textSize = 52f
+                        val textWidth = textPaint.measureText(text)
+                        val textX = (itemView.right - textWidth - 40)
+//                        val textX = dX + textPadding
+                        val textY = (itemView.top + itemHeight / 2 + textPaint.textSize / 2 - 8).toFloat()
+                        c.drawText(text, textX, textY, textPaint)
+
+                    }
+                }
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+        }
         // 리사이클러뷰에 ItemTouchHelper 적용
         ItemTouchHelper(itemCallback).attachToRecyclerView(recyclerView)
+        ItemTouchHelper(itemCallback2).attachToRecyclerView(cRecyclerView)
 
         return view
     }
@@ -292,7 +367,6 @@ class MonthFragment : Fragment() {
 
     private fun setListDB() { // 체크리스트 DB 가져와서 저장
         val currentUser = auth.currentUser
-        val cRecyclerView = binding.checklistContainer
         if (currentUser != null) {  // 로그인 되어있는 경우
 
             var docRef = db.collection("users").document(currentUser.email!!)
