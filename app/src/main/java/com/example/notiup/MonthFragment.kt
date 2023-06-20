@@ -135,7 +135,7 @@ class MonthFragment : Fragment() {
             setTopbarVisible(false)     // Topbar안보이게
         }
 
-        dotDecorator()
+        if(auth.currentUser !=null) dotDecorator()  // 로그인 시
 
 
         // 달력 날짜 선택 Listener
@@ -325,6 +325,7 @@ class MonthFragment : Fragment() {
     }
 
     fun dotDecorator() {
+
         val docRef = db.collection("users").document(auth.currentUser!!.email!!)
             .collection("schedule")
         CoroutineScope(Dispatchers.IO).launch {
