@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
             1-> {
                 supportFragmentManager.beginTransaction().replace(R.id.frame, MonthFragment()).commit()
             }
+            2 -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frame, AlarmFragment()).commit()
+            }
         }
     }
 

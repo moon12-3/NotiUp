@@ -1,6 +1,5 @@
 package com.example.notiup
 
-import android.content.ClipData.Item
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
@@ -8,35 +7,47 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.FragmentAlarmBinding
-import com.example.notiup.databinding.FragmentMonthBinding
+import com.example.notiup.db.AlarmDao
+import com.example.notiup.db.AppDatabase
+import com.example.notiup.entity.Alarm
+import com.example.notiup.viewModel.ScheduleModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class AlarmFragment : Fragment() {
 
     lateinit var mainActivity : MainActivity
     lateinit var binding : FragmentAlarmBinding
-    //    private var alarm = ArrayList<Alarm>()  // 데이터 리스트
-    private lateinit var rvAdapter : AlarmAdapter  // 어댑터
+    private lateinit var rvAdapter : AlarmAdapter
+    private lateinit var rvAdapter2 : AlarmAdapter2
     private lateinit var recyclerView : RecyclerView
+    private lateinit var alarm: LiveData<MutableList<Alarm>>
 
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
+    private lateinit var alarmDao: AlarmDao
 
 
     override fun onAttach(context: Context) {
@@ -54,27 +65,28 @@ class AlarmFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_alarm, container, false)
 
         binding = FragmentAlarmBinding.bind(view)
+        val roomDb = AppDatabase.getInstance(requireContext())
+        alarmDao = roomDb.alarmDao()
 
         // bottom view
 
         // CHECK BOX bottom view
-        val bottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
-
+        val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
-        binding.fabEdit.setOnClickListener {
-            val bottomSheet = BottomSheet(mainActivity)
-            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
-        }
-        // 취소 누르면 숨겨지게
-        bottomSheetView.findViewById<TextView>(R.id.cancel).setOnClickListener {
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
 
         // 알람 추가 bottom View
-        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.setContentView(checkBottomSheetView)
+        binding.fabEdit.setOnClickListener {
+            val today = SimpleDateFormat("yyyy-M-d")
+            val todayText = today.format(Date())
+            setFragmentResult("requestKey", bundleOf("bundleKey" to todayText))
+            val bottomSheet = BottomSheet(mainActivity, 2)
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+        // 알람 필터 bottom View
         binding.fabFilter.setOnClickListener {
-            bottomSheetDialog.show()
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            val bottomSheet = CheckBottomSheet()
+            bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 
         //recyclerView 내용 (알람)
@@ -82,7 +94,9 @@ class AlarmFragment : Fragment() {
 
         // 로그인 했는지 관련
         if(auth.currentUser != null) { // 로그인 했을 시
-            setDB()
+            setDB2()
+        } else {
+            setDB(0)
         }
 
         // ItemTouchHelper의 callback 함수
@@ -98,9 +112,21 @@ class AlarmFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                // 해당 위치의 데이터 삭제
-                rvAdapter.removeData(viewHolder.layoutPosition)
+                if(auth.currentUser != null) { // 로그인 했을 시
+                    rvAdapter.removeData(viewHolder.layoutPosition)
+                } else {
+                    val position = viewHolder.adapterPosition
+                    val alarmToDelete: Alarm = rvAdapter2.getItem(position)
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        alarmDao.delete(alarmToDelete)
+                        // 해당 위치의 데이터 삭제
+                        rvAdapter2.removeData(viewHolder.layoutPosition)
+                    }
+                }
+
             }
+
 
             // 꾹 눌러 이동할 수 없도록 함
             override fun isLongPressDragEnabled(): Boolean {
@@ -158,22 +184,42 @@ class AlarmFragment : Fragment() {
     }
 
     // DB에서 추가한 알람 불러오는 함수
-    private fun setDB() {
-        val coll = "schedule ${auth.currentUser!!.email}"
-        val docRef = db.collection(coll).orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
+    fun setDB(sortType: Int) {
+        val sortedAlarms = when (sortType) {
+            0 -> alarmDao.getAllAlarmSortedBySdate()
+            1 -> alarmDao.getAllAlarmSortedBySdateDesc()
+            else -> alarmDao.getAllAlarmSortedBySdate() // 기본적으로 오름차순으로 정렬
+        }
+        sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            var alarmList: MutableList<Alarm> = mutableListOf()
+            for (alarm in it) {
+                alarmList.add(Alarm(alarm.a_id, alarm.atitle, alarm.sdate, alarm.stime, alarm.edate, alarm.edate, alarm.repeat, alarm.amemo))
+            }
+
+            rvAdapter2 = AlarmAdapter2(alarmList)
+
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = rvAdapter2
+            recyclerView.setHasFixedSize(true)
+        })
+    }
+
+    private fun setDB2() {
+        val docRef = db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule").orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
 
         docRef.get()
             .addOnSuccessListener { result ->
                 val scheduleList = mutableListOf<ScheduleModel>()
-
-                scheduleList.clear()
+                val idList = mutableListOf<String>()
                 for (document in result) {
                     val schedule = document.toObject<ScheduleModel>()
                     scheduleList.add(schedule)
+                    idList.add(document.id)
                     Log.d("mytag", "${document.id} => ${document.data}")
                 }
 
-                rvAdapter = AlarmAdapter(scheduleList)
+                rvAdapter = AlarmAdapter(scheduleList, idList)
 
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = rvAdapter

@@ -1,15 +1,20 @@
 package com.example.notiup
 
-import com.example.notiup.db.AppDatabase
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notiup.databinding.ListItemBinding
 import com.example.notiup.entity.Alarm
+import com.example.notiup.viewModel.ScheduleModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
-class AlarmAdapter(val dataList : MutableList<ScheduleModel>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
+class AlarmAdapter(val dataList: MutableList<ScheduleModel>, val idList : MutableList<String>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
+
     inner class ViewHolder(private val binding : ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : ScheduleModel) {
             binding.tvTime.text = schedule.sTime
@@ -18,19 +23,33 @@ class AlarmAdapter(val dataList : MutableList<ScheduleModel>) : RecyclerView.Ada
         }
     }
 
+    val db = Firebase.firestore
+    val auth = Firebase.auth
+
     interface ItemClick{
         fun onClick(view: View, position: Int, list: ArrayList<Alarm>)
     }
     var itemClick : ItemClick? = null
 
     fun removeData(position: Int) {
-        dataList.removeAt(position)
-        notifyItemRemoved(position)
+        db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule").document(idList[position])
+            .delete()
+            .addOnSuccessListener {
+                Log.d("mytag", "DocumentSnapsWhot successfully deleted!")
+                dataList.removeAt(position)
+                notifyItemRemoved(position)
+                idList.removeAt(position)
+            }
+            .addOnFailureListener { e -> Log.w("mytag", "Error deleting document", e) }
+    }
+
+    fun getItem(position: Int): ScheduleModel {
+        return dataList[position]
     }
 
     // 레이아웃과 연결
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)  // 어댑터에 연결된 액티비티를 가져옴
         return ViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 

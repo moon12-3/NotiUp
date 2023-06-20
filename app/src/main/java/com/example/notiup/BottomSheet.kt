@@ -7,13 +7,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
 import com.example.notiup.databinding.BottomSheetBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
+import com.example.notiup.viewModel.ScheduleModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -23,10 +26,11 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 
-class BottomSheet(context : Context) : BottomSheetDialogFragment() {
+class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment() {
 
     lateinit var binding : BottomSheetBinding
     private lateinit var spinner : Spinner
@@ -35,6 +39,7 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     private lateinit var db : FirebaseFirestore
     private lateinit var selectedDate : String
     private lateinit var alarmDao: AlarmDao
+    private val fNumber = fNumber
 
     private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
 
@@ -66,13 +71,15 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         }
     }
 
+
+    override fun getTheme(): Int = R.style.AppBottomSheetDialogTheme
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?
     {
-
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
 
@@ -81,6 +88,12 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
         binding = BottomSheetBinding.bind(view)
         db = Firebase.firestore
+
+        val year = LocalDate.now().year.toString()
+        val month = LocalDate.now().monthValue.toString()
+        val day = LocalDate.now().dayOfMonth.toString()
+        selectedDate = "$year-$month-$day"
+
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
@@ -107,13 +120,12 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
         // 취소 누르면 숨겨지게
         binding.cancel.setOnClickListener {
             dismiss()
-            (activity as MainActivity).changeFragment(1)
+            (activity as MainActivity).changeFragment(fNumber)
         }
 
         // 나경씨의 코드
         val list: ArrayList<DropdownList> = ArrayList()
 
-        binding = BottomSheetBinding.bind(view)
         auth = Firebase.auth
 
         val a = DropdownList()
@@ -147,47 +159,28 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
             }
         }
 
-        val alarm = Alarm(atitle = "a", sday = "1", stime = "2", eday = "3", etime = "4", repeat = 1, amemo = "메모")
         // 저장 버튼
         binding.btnSave.setOnClickListener {
             val currentUser = auth.currentUser
             if(currentUser == null) {   // 로그인 전
-//                addAlarm()
-                CoroutineScope(Dispatchers.IO).launch{
-                    alarmDao.insert(alarm)
-                    Log.d("mytag", "insert 성공!!!!!!!!!!!")
-                }
+                uploadAlarm2()
             } else { // 로그인 시
-                if(binding.banner.isChecked) addAlarm2(2)
-                else if(binding.noticenter.isChecked) addAlarm2(1)
                 uploadAlarm()
             }
+            if(binding.lockscreen.isChecked) {
+                addAlarm(0)
+                if(binding.banner.isChecked) addAlarm(2)
+                else if(binding.noticenter.isChecked) addAlarm(1)
+            } else {
+                if(binding.banner.isChecked) addAlarm(2)
+                else if(binding.noticenter.isChecked) addAlarm(1)
+            }
+
+            dismiss()
+            (activity as MainActivity).changeFragment(fNumber)
         }
 
         return view
-    }
-
-    private fun uploadAlarm() {
-        var hour = binding.startTimepicker.hour.toString()
-        var minute = binding.startTimepicker.minute.toString()
-        if(hour.length == 1) hour = "0$hour"
-        if(minute.length == 1) minute = "0$minute"
-        val schedule = ScheduleModel(
-            binding.etTitle.text.toString(),
-            binding.etMemo.text.toString(),
-            selectedDate,
-            "$hour : $minute"
-        )
-
-        val coll = "schedule ${auth.currentUser!!.email}"
-        db.collection(coll).add(schedule)
-            .addOnSuccessListener {
-                Log.d("mytag", "DocumentSnapshot successfully written!")
-                Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
-                dismiss()
-                (activity as MainActivity).changeFragment(1)
-            }
-            .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
     }
 
     private fun setSetting() {
@@ -262,21 +255,83 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     }
 
-    private fun addAlarm() {
-        val aname = binding.etTitle.text.toString()
-        val sday = binding.startDay.text.toString()
-        val stime = binding.startTime.text.toString()
-        val eday = binding.endDay.text.toString()
-        val etime = binding.endTime.text.toString()
-        val repeat = binding.repeat
-        val amemo = binding.etMemo.text.toString()
-//        val lockscreen = binding.lockscreen
-//        val noticenter = binding.noticenter
-//        val banner = binding.banner
-//        val t_id_fk: Int
+    private fun changeHour(hour: String): String {
+        if(hour.length == 1) {
+            return "0$hour"
+        } else {
+            return "$hour"
+        }
     }
 
-    private fun addAlarm2(type : Int) {
+    private fun changeMinute(minute: String): String {
+        if(minute.length == 1) {
+            return "0$minute"
+        } else {
+            return "$minute"
+        }
+    }
+
+    private fun uploadAlarm() { // 로그인 시 DB에 올리는 코드
+        val currentUser = auth.currentUser
+        var hour = changeHour(binding.startTimepicker.hour.toString())
+        var minute = changeMinute(binding.startTimepicker.minute.toString())
+
+        if(currentUser != null) {
+            val schedule = ScheduleModel(
+                binding.etTitle.text.toString(),
+                binding.etMemo.text.toString(),
+                selectedDate,
+                "$hour : $minute"
+            )
+
+            db.collection("users").document(currentUser.email!!)
+                .collection("schedule").add(schedule)
+                .addOnSuccessListener {
+                    Log.d("mytag", "DocumentSnapshot successfully written!")
+                    Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+                .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
+        } else {
+            Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
+
+    }
+
+    private fun uploadAlarm2() {    // 로그인 X시 DB에 올리는 코드
+        val aTitle = binding.etTitle.text.toString()
+        val sDate = "$selectedDate"
+        val sHour = binding.startTimepicker.hour.toString()
+        val sMinute = binding.startTimepicker.minute.toString()
+        val scHour = changeHour(sHour)
+        val scMinute = changeMinute(sMinute)
+        val sTime = "$scHour : $scMinute" // 알람이 울리는 시간
+        val eDate = "$selectedDate"
+        val eHour = binding.startTimepicker.hour.toString()
+        val eMinute = binding.startTimepicker.minute.toString()
+        val ecHour = changeHour(eHour)
+        val ecMinute = changeMinute(eMinute)
+        val eTime = "$ecHour : $ecMinute"
+        val repeat = binding.repeat
+        val aMemo = binding.etMemo.text.toString()
+//        val t_id_fk: Int
+
+        val alarm = Alarm(
+            atitle = aTitle,
+            sdate = sDate,
+            stime = sTime,
+            edate = eDate,
+            etime = eTime,
+            repeat = 1,
+            amemo = aMemo)
+        CoroutineScope(Dispatchers.IO).launch{
+            alarmDao.insert(alarm)
+            Log.d("mytag", "insert 성공")
+        }
+    }
+
+    private fun addAlarm(type : Int) {  // 휴대폰에 울릴 알람 추가하는 코드
         val text = binding.etTitle.text.toString()
         val content = binding.etMemo.text.toString()
 
@@ -292,4 +347,5 @@ class BottomSheet(context : Context) : BottomSheetDialogFragment() {
     private fun setAlarm(alarmCode : Int, content : String, text : String, time : String, type : Int){
         alarmFunctions.callAlarm(time, alarmCode, text, content, type)
     }
+
 }
