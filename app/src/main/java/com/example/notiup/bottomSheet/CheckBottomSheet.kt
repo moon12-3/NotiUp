@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.notiup.AlarmFragment
+import com.example.notiup.MainActivity
 import com.example.notiup.R
 import com.example.notiup.databinding.CheckBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -17,6 +18,14 @@ class CheckBottomSheet(context : Context) : BottomSheetDialogFragment() {
 
     private lateinit var binding : CheckBottomSheetBinding
     private lateinit var sharedPreferences: SharedPreferences
+
+    private lateinit var mainActivity : MainActivity    // Activity 담긴 객체
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        mainActivity = context as MainActivity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +83,7 @@ class CheckBottomSheet(context : Context) : BottomSheetDialogFragment() {
                 putString("type2", type2)
             }
             fragment.arguments = bundle
+            (activity as MainActivity).changeFragment(2)
             dismiss()
         }
 

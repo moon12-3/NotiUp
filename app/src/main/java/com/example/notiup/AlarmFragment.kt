@@ -1,14 +1,14 @@
 package com.example.notiup
 
-import android.content.Context
+import android.content.*
 import android.content.Intent.getIntent
-import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -66,6 +67,37 @@ class AlarmFragment : Fragment() {
         auth = Firebase.auth
         db = Firebase.firestore
         rDb = Firebase.database.reference
+    }
+
+    var today = SimpleDateFormat("yyyy-M-d")
+    var now = SimpleDateFormat("HH : mm")
+    var todayText: String = today.format(Date())
+    var nowText: String = now.format(Date())
+
+    private lateinit var mBR : BroadcastReceiver    // 매 분마다 호출(끝나는 시간이 지나면 알람 삭제, 체크리스트 추가)
+
+    override fun onStart() {
+        super.onStart()
+        mBR = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context, intent: Intent) {
+                if (intent.action?.compareTo(Intent.ACTION_TIME_TICK) == 0) {
+                    today = SimpleDateFormat("yyyy-M-d")
+                    now = SimpleDateFormat("HH : mm")
+                    todayText = today.format(Date())
+                    nowText = now.format(Date())
+                    Log.d("mytag", "현재 날짜 : $todayText, 현재 시간 : $nowText")
+                    val savedType = sharedPreferences.getString("type", "all")
+                    val savedType2 = sharedPreferences.getString("type2", "time_asc")
+                    setDB2(savedType!!, savedType2!!)
+                }
+            }
+        }
+        ContextCompat.registerReceiver(
+            mainActivity,
+            mBR,
+            IntentFilter(Intent.ACTION_TIME_TICK),
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     override fun onCreateView(
@@ -136,7 +168,7 @@ class AlarmFragment : Fragment() {
 
         // 로그인 했는지 관련
         if(auth.currentUser != null) { // 로그인 했을 시
-            setDB2()
+            setDB2(savedType!!, savedType2!!)
         } else {
             setDB(savedType!!, savedType2!!)
         }
@@ -255,9 +287,14 @@ class AlarmFragment : Fragment() {
         })
     }
 
-    private fun setDB2() {
-        val docRef = db.collection("users").document(auth.currentUser!!.email!!)
-            .collection("schedule").orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
+    private fun setDB2(sortType: String, sortType2: String) {
+
+        val docRef = if(sortType2=="time_asc")
+            db.collection("users").document(auth.currentUser!!.email!!)
+                .collection("schedule").orderBy("ord") // 최근 알람 순(금방 울릴 알람부터)
+            else
+            db.collection("users").document(auth.currentUser!!.email!!)
+            .collection("schedule").orderBy("ord", Query.Direction.DESCENDING) // 최근 알람 순(금방 울릴 알람부터)
 
         docRef.get()
             .addOnSuccessListener { result ->
@@ -265,9 +302,13 @@ class AlarmFragment : Fragment() {
                 val idList = mutableListOf<String>()
                 for (document in result) {
                     val schedule = document.toObject<ScheduleModel>()
-                    scheduleList.add(schedule)
-                    idList.add(document.id)
-                    Log.d("mytag", "${document.id} => ${document.data}")
+                    if(schedule.sDate>todayText || (schedule.sTime>nowText && schedule.sDate==todayText)) {
+                        if(sortType!="today" || todayText==schedule.sDate) {
+                            scheduleList.add(schedule)
+                            idList.add(document.id)
+                            Log.d("mytag", "${document.id} => ${document.data}")
+                        }
+                    }
                 }
 
                 rvAdapter = AlarmAdapter(scheduleList, idList)

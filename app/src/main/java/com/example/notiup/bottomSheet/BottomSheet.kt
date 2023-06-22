@@ -295,7 +295,8 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
                 binding.etTitle.text.toString(),
                 binding.etMemo.text.toString(),
                 selectedDate,
-                "$hour : $minute"
+                "$hour : $minute",
+                selectedDate+"$hour : $minute"
             )
 
             db.collection("users").document(currentUser.email!!)
