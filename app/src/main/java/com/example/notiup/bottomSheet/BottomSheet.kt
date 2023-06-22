@@ -103,6 +103,15 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
+        // 커밍 쑨 작업
+        binding.repeat.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.tag.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
+
         binding.startCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
