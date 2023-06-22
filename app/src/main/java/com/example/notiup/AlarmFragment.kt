@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -17,15 +15,20 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notiup.bottomSheet.BottomSheet
+import com.example.notiup.bottomSheet.CheckBottomSheet
 import com.example.notiup.databinding.FragmentAlarmBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
 import com.example.notiup.viewModel.ScheduleModel
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.example.notiup.viewModel.UserModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -50,6 +53,7 @@ class AlarmFragment : Fragment() {
     private var type2: Int? = null
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
+    private lateinit var rDb : DatabaseReference
     private lateinit var alarmDao: AlarmDao
 
 
@@ -59,6 +63,7 @@ class AlarmFragment : Fragment() {
         mainActivity = context as MainActivity
         auth = Firebase.auth
         db = Firebase.firestore
+        rDb = Firebase.database.reference
     }
 
     override fun onCreateView(
@@ -70,14 +75,36 @@ class AlarmFragment : Fragment() {
         binding = FragmentAlarmBinding.bind(view)
         val roomDb = AppDatabase.getInstance(requireContext())
         alarmDao = roomDb.alarmDao()
+        val currentUser = auth.currentUser
+
+        if(auth.currentUser!! != null) {    // 로그인 시
+            currentUser?.let {
+                val docRef = rDb.child("users").child(currentUser.uid)
+                docRef.get()
+                    .addOnSuccessListener { docu ->
+                        if (docu != null) {
+                            val userModel = docu.getValue<UserModel>()
+                            binding.tvName.text = userModel!!.name+"님의 알람"
+                        }
+                        else Log.d("my_tag", "No such document")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d("my_tag", "get failed with ", exception)
+                    }
+            }
+        }
 
         // bottom view
         // CHECK BOX bottom view
         val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(mainActivity, R.style.BottomSheetDialogTheme)
 
+        binding.fabFilter.setOnClickListener {
+            val checkBottomSheet = CheckBottomSheet(mainActivity)
+            checkBottomSheet.show(mainActivity.getSupportFragmentMana(), checkBottomSheet.tag)
+        }
+
         // 알람 추가 bottom View
-        bottomSheetDialog.setContentView(checkBottomSheetView)
         binding.fabEdit.setOnClickListener {
             val today = SimpleDateFormat("yyyy-M-d")
             val todayText = today.format(Date())
@@ -87,7 +114,7 @@ class AlarmFragment : Fragment() {
         }
         // 알람 필터 bottom View
         binding.fabFilter.setOnClickListener {
-            val bottomSheet = CheckBottomSheet()
+            val bottomSheet = CheckBottomSheet(mainActivity)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 

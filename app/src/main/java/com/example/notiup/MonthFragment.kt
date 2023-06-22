@@ -9,8 +9,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -25,6 +23,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notiup.bottomSheet.BottomSheet
 import com.example.notiup.databinding.FragmentMonthBinding
 import com.example.notiup.viewModel.ScheduleModel
 import com.example.notiup.viewModel.TodoModel
@@ -39,16 +38,13 @@ import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MonthFragment : Fragment() {
 
@@ -175,6 +171,7 @@ class MonthFragment : Fragment() {
         binding.fabEdit.setOnClickListener {
             setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity, 1)
+            bottomSheet.setCancelable(false)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
         }
 

@@ -22,7 +22,7 @@ class AlarmServiceActivity : AppCompatActivity() {
         val view = binding.root
 
         // TODO: room에서 데이터 가져와서 정의하기
-        binding.timeTv.text = "12 : 34"
+        binding.timeTv.text = "09 : 00"
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
