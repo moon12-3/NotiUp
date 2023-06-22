@@ -200,6 +200,7 @@ class AlarmFragment : Fragment() {
     }
 
     private fun setDB2() {
+
         val docRef = db.collection("users").document(auth.currentUser!!.email!!)
             .collection("schedule").orderBy("sdate") // 최근 알람 순(금방 울릴 알람부터)
 

@@ -17,6 +17,7 @@ import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
 import com.example.notiup.viewModel.ScheduleModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -73,6 +74,22 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
 
 
     override fun getTheme(): Int = R.style.AppBottomSheetDialogTheme
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Get the BottomSheetBehavior from the view
+        val behavior = BottomSheetBehavior.from(view.parent as View)
+
+        // Disable dragging behavior
+        behavior.isDraggable = false
+
+        behavior.peekHeight = 800
+
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        // Disable peek height
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
