@@ -15,40 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class CheckBottomSheet(context : Context) : BottomSheetDialogFragment() {
 
-    lateinit var binding : CheckBottomSheetBinding
-    private val PREF_CHECKED_ID = "pref_checked_id"
-    private val PREF_CHECKED_ID2 = "pref_checked_id2"
-
-    // SharedPreferences 초기화
-    private val sharedPreferences: SharedPreferences by lazy {
-        requireContext().getSharedPreferences("mypref", Context.MODE_PRIVATE)
-    }
-
-    private fun setInitialCheckedId() {
-        val checkedId = loadCheckedId(1) // 첫 번째 라디오 그룹의 체크한 값을 불러옴
-        binding.radioGroup.check(checkedId)
-        val checkedId2 = loadCheckedId(2) // 두 번째 라디오 그룹의 체크한 값을 불러옴
-        binding.radioGroup2.check(checkedId2)
-    }
-
-    // 저장된 체크한 ID 불러오기
-    private fun loadCheckedId(group: Int): Int {
-        val prefKey = when (group) {
-            1 -> PREF_CHECKED_ID    // 라디오 그룹 1
-            2 -> PREF_CHECKED_ID2   // 라디오 그룹 2
-            else -> PREF_CHECKED_ID
-        }
-        return sharedPreferences.getInt(prefKey, 0)
-    }
-
-    private fun saveCheckedId(group: Int, checkedId: Int) {
-        val prefKey = when (group) {
-            1 -> PREF_CHECKED_ID    // 라디오 그룹 1
-            2 -> PREF_CHECKED_ID2   // 라디오 그룹 2
-            else -> PREF_CHECKED_ID
-        }
-        sharedPreferences.edit().putInt(prefKey, checkedId).apply()
-    }
+    private lateinit var binding : CheckBottomSheetBinding
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,21 +27,28 @@ class CheckBottomSheet(context : Context) : BottomSheetDialogFragment() {
         val view = inflater.inflate(R.layout.check_bottom_sheet, container, false)
 
         binding = CheckBottomSheetBinding.bind(view)
+        sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+        // 이전에 선택한 값을 가져와서 설정
+        val savedType = sharedPreferences.getString("type", "all")
+        val savedType2 = sharedPreferences.getString("type2", "time_asc")
+        binding.radioGroup.check(if (savedType == "today") R.id.today else R.id.all)
+        binding.radioGroup2.check(if (savedType2 == "time_desc") R.id.time_desc else R.id.time_asc)
+
+
         binding.cancel.setOnClickListener {
             dismiss()
         }
-
-        val bundle = Bundle()
 
         binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.today -> {
                     Log.d("mytag", "today")
-                    bundle.putInt("type", 0)
+                    sharedPreferences.edit().putString("type", "today").apply()
                 }
                 R.id.all -> {
                     Log.d("mytag", "all")
-                    bundle.putInt("type", 1)
+                    sharedPreferences.edit().putString("type", "all").apply()
                 }
             }
         }
@@ -82,36 +57,27 @@ class CheckBottomSheet(context : Context) : BottomSheetDialogFragment() {
             when (checkedId) {
                 R.id.time_desc -> {
                     Log.d("mytag", "time_desc")
-                    bundle.putInt("type2", 0)
+                    sharedPreferences.edit().putString("type2", "time_desc").apply()
                 }
                 R.id.time_asc -> {
                     Log.d("mytag", "time_asc")
-                    bundle.putInt("type2", 1)
+                    sharedPreferences.edit().putString("type2", "time_asc").apply()
                 }
             }
         }
-
         val fragment = AlarmFragment()
-        fragment.arguments = bundle
-
         binding.btnSave.setOnClickListener {
-            val checkedId = binding.radioGroup.checkedRadioButtonId
-            val checkedId2 = binding.radioGroup2.checkedRadioButtonId
-
-            // 체크한 ID 값을 저장
-            saveCheckedId(1, checkedId)
-            saveCheckedId(2, checkedId2)
-
+            val bundle = Bundle().apply {
+                val type = sharedPreferences.getString("type", "all")
+                val type2 = sharedPreferences.getString("type2", "time_asc")
+                putString("type", type)
+                putString("type2", type2)
+            }
+            fragment.arguments = bundle
             dismiss()
         }
 
         return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setInitialCheckedId()
     }
 
     override fun getTheme(): Int = R.style.AppBottomSheetDialogTheme

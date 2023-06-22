@@ -1,6 +1,8 @@
 package com.example.notiup
 
 import android.content.Context
+import android.content.Intent.getIntent
+import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +38,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.properties.Delegates
 
 
 class AlarmFragment : Fragment() {
@@ -48,13 +51,11 @@ class AlarmFragment : Fragment() {
     private lateinit var rvAdapter2 : AlarmAdapter2
     private lateinit var recyclerView : RecyclerView
     private lateinit var alarm: LiveData<MutableList<Alarm>>
-    private var receivedBundle: Bundle? = null
-    private var type: Int? = null
-    private var type2: Int? = null
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
     private lateinit var rDb : DatabaseReference
     private lateinit var alarmDao: AlarmDao
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     override fun onAttach(context: Context) {
@@ -94,6 +95,18 @@ class AlarmFragment : Fragment() {
             }
         }
 
+//        val bundle = arguments ?: Bundle().apply {
+//            putString("type", "all")
+//            putString("type2", "time_asc")
+//        }
+//        val type = bundle.getString("type", "all")
+//        val type2 = bundle.getString("type2", "time_asc")
+
+        // 라디오 버튼 값 받아오기
+        sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val savedType = sharedPreferences.getString("type", "all")
+        val savedType2 = sharedPreferences.getString("type2", "time_asc")
+
         // bottom view
         // CHECK BOX bottom view
         val checkBottomSheetView = layoutInflater.inflate(R.layout.check_bottom_sheet, null)
@@ -130,8 +143,9 @@ class AlarmFragment : Fragment() {
         if(auth.currentUser != null) { // 로그인 했을 시
             setDB2()
         } else {
-            setDB(type, type2)
+            setDB(savedType!!, savedType2!!)
         }
+
 
         // ItemTouchHelper의 callback 함수
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
@@ -218,16 +232,27 @@ class AlarmFragment : Fragment() {
     }
 
     // DB에서 추가한 알람 불러오는 함수
-    fun setDB(sortType: Int, sortType2: Int) {
-        val alarmRepository = AlarmDao.AlarmRepository(alarmDao)
-        val sortedAlarms = alarmRepository.getAlarmListBasedOnInputNumber(sortType, sortType2)
-        sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            var alarmList: MutableList<Alarm> = mutableListOf()
-            for (alarm in it) {
-                alarmList.add(Alarm(alarm.a_id, alarm.atitle, alarm.sdate, alarm.stime, alarm.edate, alarm.edate, alarm.repeat, alarm.amemo))
-            }
+    fun setDB(sortType: String, sortType2: String) {
+        val today = SimpleDateFormat("yyyy-M-dd", Locale.getDefault()).format(Date())
+        val sortedAlarms: LiveData<MutableList<Alarm>>
 
-            rvAdapter2 = AlarmAdapter2(alarmList)
+        if (sortType == "today") {  // 오늘 알람
+            sortedAlarms = if (sortType2 == "time_asc") {
+                alarmDao.getTodayAlarmSortedBySdate(today)
+            } else {
+                alarmDao.getTodayAlarmSortedBySdateDesc(today)
+            }
+        } else {    // 전체 알람
+            sortedAlarms = if (sortType2 == "time_asc") {
+                alarmDao.getAllAlarmSortedBySdate()
+            } else {
+                alarmDao.getAllAlarmSortedBySdateDesc()
+            }
+        }
+
+        sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer { alarms ->
+            // rvAdapter2 초기화
+            rvAdapter2 = AlarmAdapter2(alarms)
 
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = rvAdapter2
@@ -256,10 +281,5 @@ class AlarmFragment : Fragment() {
                 recyclerView.adapter = rvAdapter
                 recyclerView.setHasFixedSize(true)
             }
-    }
-
-    fun setType(getType: Int, getType2: Int) {
-        type = getType
-        type2 = getType2
     }
 }
