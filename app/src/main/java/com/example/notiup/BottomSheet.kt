@@ -1,6 +1,7 @@
 package com.example.notiup
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -40,6 +41,7 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
     private lateinit var selectedDate : String
     private lateinit var alarmDao: AlarmDao
     private val fNumber = fNumber
+    private lateinit var sharedPreferences: SharedPreferences
 
     private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
 
@@ -82,18 +84,17 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
     {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
-
         val roomDb = AppDatabase.getInstance(requireContext())
         alarmDao = roomDb.alarmDao()
 
         binding = BottomSheetBinding.bind(view)
+        sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         db = Firebase.firestore
 
         val year = LocalDate.now().year.toString()
         val month = LocalDate.now().monthValue.toString()
         val day = LocalDate.now().dayOfMonth.toString()
         selectedDate = "$year-$month-$day"
-
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
@@ -128,20 +129,31 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
 
         auth = Firebase.auth
 
-        val a = DropdownList()
-        a.setWord("aaaa")
-        a.setImageRes(R.drawable.check_icon)
-        list.add(a)
+//        val a = DropdownList()
+//        a.setWord("안함")
+//        a.setImageRes(R.drawable.check_icon)
+//        list.add(a)
+//        val b = DropdownList()
+//        b.setWord("매일")
+//        b.setImageRes(R.drawable.check_icon)
+//        list.add(b)
+//        val c = DropdownList()
+//        c.setWord("매주")
+//        c.setImageRes(R.drawable.check_icon)
+//        list.add(c)
+//        val d = DropdownList()
+//        d.setWord("2주마다")
+//        d.setImageRes(R.drawable.check_icon)
+//        list.add(d)
+//        val e = DropdownList()
+//        e.setWord("매월 같은 요일")
+//        e.setImageRes(R.drawable.check_icon)
+//        list.add(e)
+//        val f = DropdownList()
+//        f.setWord("매월 같은 날짜")
+//        f.setImageRes(R.drawable.check_icon)
+//        list.add(f)
 
-        val b = DropdownList()
-        b.setWord("bbbbb")
-        b.setImageRes(R.drawable.check_icon)
-        list.add(b)
-
-        val c = DropdownList()
-        c.setWord("cccccc")
-        c.setImageRes(R.drawable.check_icon)
-        list.add(c)
 
         spinner = view.findViewById(R.id.custom_spinner)
         adapter = CustomSpinnerAdapter(requireContext(), list)
@@ -155,7 +167,7 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무 것도 선택되지 않았을 때 처리할 작업이 있다면 여기에 작성하세요.
+                // 아무 것도 선택되지 않았을 때 처리할 작업이 있다면 여기에 작성
             }
         }
 
@@ -325,6 +337,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             etime = eTime,
             repeat = 1,
             amemo = aMemo)
+
+        sharedPreferences.edit().putInt("aId", alarm.a_id).apply()
+        sharedPreferences.edit().putString("sTime", sTime).apply()
+        sharedPreferences.edit().putString("aMemo", aMemo).apply()
         CoroutineScope(Dispatchers.IO).launch{
             alarmDao.insert(alarm)
             Log.d("mytag", "insert 성공")

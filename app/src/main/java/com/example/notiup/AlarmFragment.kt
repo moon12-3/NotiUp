@@ -140,7 +140,6 @@ class AlarmFragment : Fragment() {
 
             }
 
-
             // 꾹 눌러 이동할 수 없도록 함
             override fun isLongPressDragEnabled(): Boolean {
                 return false
@@ -180,16 +179,6 @@ class AlarmFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         }
-
-//        with(recyclerView) {
-//            // 레이아웃매니저 설정
-//            layoutManager = LinearLayoutManager(context)
-//            setHasFixedSize(true)
-//            // 어댑터 설정
-//            adapter = rvAdapter
-//
-//            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-//        }
 
         // 리사이클러뷰에 ItemTouchHelper 적용
         ItemTouchHelper(itemCallback).attachToRecyclerView(recyclerView)

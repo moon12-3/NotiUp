@@ -2,8 +2,6 @@ package com.example.notiup.db
 
 import com.example.notiup.entity.Alarm
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -41,5 +39,13 @@ interface AlarmDao {
     // 오늘 날짜, time_desc
     @Query("SELECT * FROM alarm WHERE sdate = :todayString ORDER BY sdate DESC, stime DESC")
     fun getTodayAlarmSortedBySdateDesc(todayString: String): LiveData<MutableList<Alarm>>
+
+    // 시작 시간 가져오기
+    @Query("SELECT sdate FROM alarm WHERE a_id = :id")
+    fun getSdate(id: Int): String
+
+    // 메모 가져오기
+    @Query("SELECT amemo FROM alarm WHERE a_id = :id")
+    fun getAmemo(id: Int): String
 
 }
