@@ -26,33 +26,20 @@ interface AlarmDao {
     @Delete
     fun delete(alarm: Alarm)
 
-    @Query("SELECT * FROM alarm ORDER BY sdate, stime ASC")
+    // 모든 날짜, time_asc
+    @Query("SELECT * FROM alarm ORDER BY sdate ASC, stime ASC")
     fun getAllAlarmSortedBySdate(): LiveData<MutableList<Alarm>>
 
-    @Query("SELECT * FROM alarm ORDER BY sdate, stime DESC")
+    // 모든 날짜, time_desc
+    @Query("SELECT * FROM alarm ORDER BY sdate DESC, stime DESC")
     fun getAllAlarmSortedBySdateDesc(): LiveData<MutableList<Alarm>>
 
-    @Query("SELECT * FROM alarm WHERE sdate = :todayString")
-    fun getTodayAlarm(todayString: String): LiveData<MutableList<Alarm>>
+    // 오늘 날짜, time_asc
+    @Query("SELECT * FROM alarm WHERE sdate = :todayString ORDER BY sdate ASC, stime ASC")
+    fun getTodayAlarmSortedBySdate(todayString: String): LiveData<MutableList<Alarm>>
 
-    @Query("SELECT * FROM alarm")
-    fun getAllAlarm(): LiveData<MutableList<Alarm>>
+    // 오늘 날짜, time_desc
+    @Query("SELECT * FROM alarm WHERE sdate = :todayString ORDER BY sdate DESC, stime DESC")
+    fun getTodayAlarmSortedBySdateDesc(todayString: String): LiveData<MutableList<Alarm>>
 
-    class AlarmRepository(private val alarmDao: AlarmDao) {
-        fun getAlarmListBasedOnInputNumber(inputNumber: Int, inputNumber2: Int): LiveData<MutableList<Alarm>> {
-            val alarmListLiveData = if (inputNumber == 0) { // 오름차순 선택
-                alarmDao.getAllAlarmSortedBySdate()
-            } else {    // 내림차순 선택
-                alarmDao.getAllAlarmSortedBySdateDesc()
-            }
-
-            return Transformations.switchMap(alarmListLiveData) { alarmList ->
-                if (inputNumber2 == 0) {    // 오늘 알람만
-                    alarmDao.getTodayAlarm(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-M-d")))
-                } else {    // 모든 알람
-                    MutableLiveData(alarmList)
-                }
-            }
-        }
-    }
 }
