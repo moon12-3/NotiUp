@@ -271,6 +271,7 @@
             android:layout_marginLeft="10dp"
             android:textSize="10sp"/>
         <LinearLayout
+            android:id="@+id/tag"
             android:layout_marginTop="5dp"
             android:layout_width="390dp"
             android:layout_height="wrap_content"

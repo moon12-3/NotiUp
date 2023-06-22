@@ -1,4 +1,4 @@
-package com.example.notiup
+package com.example.notiup.bottomSheet
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,11 +13,16 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
+import com.example.notiup.CustomSpinnerAdapter
+import com.example.notiup.DropdownList
+import com.example.notiup.MainActivity
+import com.example.notiup.R
 import com.example.notiup.databinding.BottomSheetBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
 import com.example.notiup.entity.Alarm
 import com.example.notiup.viewModel.ScheduleModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -32,6 +37,7 @@ import java.util.*
 
 
 class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment() {
+
 
     lateinit var binding : BottomSheetBinding
     private lateinit var spinner : Spinner
@@ -98,6 +104,15 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
+        // 커밍 쑨 작업
+        binding.repeat.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.tag.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
+
         binding.startCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
@@ -109,6 +124,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             binding.startDay.text = eday
         }
 
+        binding.startTimepicker.setOnTimeChangedListener { timePicker, hour, minute ->
+            binding.startTime.text = "$hour:$minute"
+        }
+
         binding.endCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
@@ -116,6 +135,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             val eday = "$year $month. $day."
 
             binding.endDay.text = eday
+        }
+
+        binding.endTimepicker.setOnTimeChangedListener { timePicker, hour, minute ->
+            binding.startTime.text = "$hour:$minute"
         }
 
         // 취소 누르면 숨겨지게
@@ -293,7 +316,8 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
                 binding.etTitle.text.toString(),
                 binding.etMemo.text.toString(),
                 selectedDate,
-                "$hour : $minute"
+                "$hour : $minute",
+                selectedDate+"$hour : $minute"
             )
 
             db.collection("users").document(currentUser.email!!)

@@ -9,14 +9,13 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.RECEIVER_EXPORTED
 import androidx.core.content.ContextCompat.registerReceiver
@@ -25,6 +24,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notiup.bottomSheet.BottomSheet
 import com.example.notiup.databinding.FragmentMonthBinding
 import com.example.notiup.viewModel.ScheduleModel
 import com.example.notiup.viewModel.TodoModel
@@ -39,16 +39,13 @@ import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MonthFragment : Fragment() {
 
@@ -175,7 +172,12 @@ class MonthFragment : Fragment() {
         binding.fabEdit.setOnClickListener {
             setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity, 1)
+            bottomSheet.setCancelable(false)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+
+        binding.fabTag.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
         }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
@@ -191,8 +193,10 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-                rvAdapter.removeData(viewHolder.layoutPosition)
-                rvAdapter.delete(viewHolder.layoutPosition)
+                if(auth.currentUser != null) {
+                    rvAdapter.removeData(viewHolder.layoutPosition)
+                    rvAdapter.delete(viewHolder.layoutPosition)
+                }
             }
 
             // 꾹 눌러 이동할 수 없도록 함
@@ -265,8 +269,10 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-//                cAdapter.removeData(viewHolder.layoutPosition)
-//                cAdapter.delete(viewHolder.layoutPosition)
+                if(auth.currentUser != null) {
+                    cAdapter.removeData(viewHolder.layoutPosition)
+                    cAdapter.delete(viewHolder.layoutPosition)
+                }
             }
 
             // 꾹 눌러 이동할 수 없도록 함
