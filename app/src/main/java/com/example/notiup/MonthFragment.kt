@@ -188,8 +188,10 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-                rvAdapter.removeData(viewHolder.layoutPosition)
-                rvAdapter.delete(viewHolder.layoutPosition)
+                if(auth.currentUser != null) {
+                    rvAdapter.removeData(viewHolder.layoutPosition)
+                    rvAdapter.delete(viewHolder.layoutPosition)
+                }
             }
 
             // 꾹 눌러 이동할 수 없도록 함
@@ -262,8 +264,10 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-//                cAdapter.removeData(viewHolder.layoutPosition)
-//                cAdapter.delete(viewHolder.layoutPosition)
+                if(auth.currentUser != null) {
+                    cAdapter.removeData(viewHolder.layoutPosition)
+                    cAdapter.delete(viewHolder.layoutPosition)
+                }
             }
 
             // 꾹 눌러 이동할 수 없도록 함

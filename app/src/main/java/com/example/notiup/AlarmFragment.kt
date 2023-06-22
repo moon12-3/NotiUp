@@ -50,6 +50,7 @@ class AlarmFragment : Fragment() {
     private lateinit var rvAdapter : AlarmAdapter
     private lateinit var rvAdapter2 : AlarmAdapter2
     private lateinit var recyclerView : RecyclerView
+    private var receivedBundle: Bundle? = null
     private lateinit var alarm: LiveData<MutableList<Alarm>>
     private lateinit var auth: FirebaseAuth // 로그인
     lateinit var db : FirebaseFirestore // DB
@@ -95,12 +96,6 @@ class AlarmFragment : Fragment() {
             }
         }
 
-//        val bundle = arguments ?: Bundle().apply {
-//            putString("type", "all")
-//            putString("type2", "time_asc")
-//        }
-//        val type = bundle.getString("type", "all")
-//        val type2 = bundle.getString("type2", "time_asc")
 
         // 라디오 버튼 값 받아오기
         sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
