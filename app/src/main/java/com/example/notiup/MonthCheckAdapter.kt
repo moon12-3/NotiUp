@@ -31,12 +31,17 @@ class MonthCheckAdapter(val dataList : MutableList<TodoModel>, val idList : Muta
     }
 
     fun removeData(position: Int) {
+        dataList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun delete(position: Int) {
+        Log.d("mytag", idList[position])
         db.collection("users").document(auth.currentUser!!.email!!)
             .collection("schedule").document(idList[position])
             .delete()
             .addOnSuccessListener {
                 Log.d("mytag", "DocumentSnapsWhot successfully deleted!")
-                dataList.removeAt(position)
                 notifyItemRemoved(position)
                 idList.removeAt(position)
             }

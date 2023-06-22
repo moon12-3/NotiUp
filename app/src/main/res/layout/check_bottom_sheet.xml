@@ -52,7 +52,8 @@
         android:layout_marginBottom="40dp">
 
         <RadioButton
-            android:id="@+id/today"
+            android:id="@+id/all"
+            android:text="전체 알람 보기"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -62,13 +63,12 @@
             android:checked="true"
             android:button="@null"
             android:drawableRight="@drawable/selector_clicked"
-            android:text="오늘 알람 보기"
             android:textColor="@color/white"
             android:textSize="16dp"/>
 
         <RadioButton
-            android:text="전체 알람 보기"
-            android:id="@+id/all"
+            android:id="@+id/today"
+            android:text="오늘 알람 보기"
             android:button="@null"
             android:drawableRight="@drawable/selector_clicked"
             android:layout_width="390dp"
@@ -91,7 +91,7 @@
         android:layout_height="400dp">
 
         <RadioButton
-            android:id="@+id/time_desc"
+            android:id="@+id/time_asc"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -101,25 +101,11 @@
             android:checked="true"
             android:button="@null"
             android:drawableRight="@drawable/selector_clicked"
-            android:text="시간 내림차순"
+            android:text="날짜 오름차순"
             android:textColor="@color/white"
             android:textSize="16dp"/>
         <RadioButton
-            android:id="@+id/time_asc"
-            android:layout_width="390dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:background="@drawable/rect2"
-            android:checked="false"
-            android:button="@null"
-            android:drawableRight="@drawable/selector_clicked"
-            android:text="시간 오름차순"
-            android:textColor="@color/white"
-            android:layout_marginTop="2dp"
-            android:textSize="16dp"/>
-        <RadioButton
+            android:id="@+id/time_desc"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -130,20 +116,6 @@
             android:button="@null"
             android:drawableRight="@drawable/selector_clicked"
             android:text="날짜 내림차순"
-            android:textColor="@color/white"
-            android:layout_marginTop="2dp"
-            android:textSize="16dp"/>
-        <RadioButton
-            android:layout_width="390dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:background="@drawable/rect2"
-            android:checked="false"
-            android:button="@null"
-            android:drawableRight="@drawable/selector_clicked"
-            android:text="날짜 오름차순"
             android:textColor="@color/white"
             android:layout_marginTop="2dp"
             android:textSize="16dp"/>

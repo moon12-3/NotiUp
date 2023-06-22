@@ -1,6 +1,7 @@
-package com.example.notiup
+package com.example.notiup.bottomSheet
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,10 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.setFragmentResultListener
 import com.example.notiup.Alarm.AlarmFunctions
+import com.example.notiup.CustomSpinnerAdapter
+import com.example.notiup.DropdownList
+import com.example.notiup.MainActivity
+import com.example.notiup.R
 import com.example.notiup.databinding.BottomSheetBinding
 import com.example.notiup.db.AlarmDao
 import com.example.notiup.db.AppDatabase
@@ -33,6 +38,7 @@ import java.util.*
 
 class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment() {
 
+
     lateinit var binding : BottomSheetBinding
     private lateinit var spinner : Spinner
     private lateinit var adapter : CustomSpinnerAdapter
@@ -41,6 +47,7 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
     private lateinit var selectedDate : String
     private lateinit var alarmDao: AlarmDao
     private val fNumber = fNumber
+    private lateinit var sharedPreferences: SharedPreferences
 
     private val alarmFunctions by lazy { AlarmFunctions(requireContext()) }
 
@@ -99,11 +106,11 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
     {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.bottom_sheet, container, false)
-
         val roomDb = AppDatabase.getInstance(requireContext())
         alarmDao = roomDb.alarmDao()
 
         binding = BottomSheetBinding.bind(view)
+        sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         db = Firebase.firestore
 
         val year = LocalDate.now().year.toString()
@@ -111,8 +118,16 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
         val day = LocalDate.now().dayOfMonth.toString()
         selectedDate = "$year-$month-$day"
 
-
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
+
+        // 커밍 쑨 작업
+        binding.repeat.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.tag.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
+        }
 
         binding.startCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
@@ -125,6 +140,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             binding.startDay.text = eday
         }
 
+        binding.startTimepicker.setOnTimeChangedListener { timePicker, hour, minute ->
+            binding.startTime.text = "$hour:$minute"
+        }
+
         binding.endCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
@@ -132,6 +151,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             val eday = "$year $month. $day."
 
             binding.endDay.text = eday
+        }
+
+        binding.endTimepicker.setOnTimeChangedListener { timePicker, hour, minute ->
+            binding.startTime.text = "$hour:$minute"
         }
 
         // 취소 누르면 숨겨지게
@@ -145,20 +168,31 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
 
         auth = Firebase.auth
 
-        val a = DropdownList()
-        a.setWord("aaaa")
-        a.setImageRes(R.drawable.check_icon)
-        list.add(a)
+//        val a = DropdownList()
+//        a.setWord("안함")
+//        a.setImageRes(R.drawable.check_icon)
+//        list.add(a)
+//        val b = DropdownList()
+//        b.setWord("매일")
+//        b.setImageRes(R.drawable.check_icon)
+//        list.add(b)
+//        val c = DropdownList()
+//        c.setWord("매주")
+//        c.setImageRes(R.drawable.check_icon)
+//        list.add(c)
+//        val d = DropdownList()
+//        d.setWord("2주마다")
+//        d.setImageRes(R.drawable.check_icon)
+//        list.add(d)
+//        val e = DropdownList()
+//        e.setWord("매월 같은 요일")
+//        e.setImageRes(R.drawable.check_icon)
+//        list.add(e)
+//        val f = DropdownList()
+//        f.setWord("매월 같은 날짜")
+//        f.setImageRes(R.drawable.check_icon)
+//        list.add(f)
 
-        val b = DropdownList()
-        b.setWord("bbbbb")
-        b.setImageRes(R.drawable.check_icon)
-        list.add(b)
-
-        val c = DropdownList()
-        c.setWord("cccccc")
-        c.setImageRes(R.drawable.check_icon)
-        list.add(c)
 
         spinner = view.findViewById(R.id.custom_spinner)
         adapter = CustomSpinnerAdapter(requireContext(), list)
@@ -172,7 +206,7 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무 것도 선택되지 않았을 때 처리할 작업이 있다면 여기에 작성하세요.
+                // 아무 것도 선택되지 않았을 때 처리할 작업이 있다면 여기에 작성
             }
         }
 
@@ -298,7 +332,8 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
                 binding.etTitle.text.toString(),
                 binding.etMemo.text.toString(),
                 selectedDate,
-                "$hour : $minute"
+                "$hour : $minute",
+                selectedDate+"$hour : $minute"
             )
 
             db.collection("users").document(currentUser.email!!)
@@ -342,6 +377,10 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             etime = eTime,
             repeat = 1,
             amemo = aMemo)
+
+        sharedPreferences.edit().putInt("aId", alarm.a_id).apply()
+        sharedPreferences.edit().putString("sTime", sTime).apply()
+        sharedPreferences.edit().putString("aMemo", aMemo).apply()
         CoroutineScope(Dispatchers.IO).launch{
             alarmDao.insert(alarm)
             Log.d("mytag", "insert 성공")

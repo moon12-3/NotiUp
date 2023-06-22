@@ -30,6 +30,6 @@ data class Alarm(
     val edate: String,
     val etime: String,
     val repeat: Int,
-    val amemo: String?,
+    val amemo: String,
 //    val t_id_fk: Int
 )

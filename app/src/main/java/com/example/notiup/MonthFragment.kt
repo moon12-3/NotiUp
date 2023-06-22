@@ -9,14 +9,13 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.RECEIVER_EXPORTED
 import androidx.core.content.ContextCompat.registerReceiver
@@ -25,6 +24,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notiup.bottomSheet.BottomSheet
 import com.example.notiup.databinding.FragmentMonthBinding
 import com.example.notiup.viewModel.ScheduleModel
 import com.example.notiup.viewModel.TodoModel
@@ -40,16 +40,13 @@ import com.google.firebase.ktx.Firebase
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MonthFragment : Fragment() {
 
@@ -62,6 +59,7 @@ class MonthFragment : Fragment() {
     private lateinit var selectedDate: String // 달력에서 선택한 날짜
 
     private lateinit var recyclerView : RecyclerView
+    private lateinit var cRecyclerView : RecyclerView
     private lateinit var rvAdapter : MonthAlarmAdapter
     private lateinit var cAdapter : MonthCheckAdapter
 
@@ -123,6 +121,7 @@ class MonthFragment : Fragment() {
 
         //recyclerView 내용 (알람)
         recyclerView = view.findViewById(R.id.fragment_container)
+        cRecyclerView = binding.checklistContainer
 
         // DB 가져오기
         setDB()
@@ -136,7 +135,7 @@ class MonthFragment : Fragment() {
             setTopbarVisible(false)     // Topbar안보이게
         }
 
-        dotDecorator()
+        if(auth.currentUser !=null) dotDecorator()  // 로그인 시
 
 
         // 달력 날짜 선택 Listener
@@ -174,7 +173,12 @@ class MonthFragment : Fragment() {
         binding.fabEdit.setOnClickListener {
             setFragmentResult("requestKey", bundleOf("bundleKey" to selectedDate))
             val bottomSheet = BottomSheet(mainActivity, 1)
+            bottomSheet.setCancelable(false)
             bottomSheet.show(mainActivity.getSupportFragmentMana(), bottomSheet.tag)
+        }
+
+        binding.fabTag.setOnClickListener {
+            Toast.makeText(mainActivity, "COMING SOON...", Toast.LENGTH_SHORT).show()
         }
 
         val itemCallback = object : ItemTouchHelper.SimpleCallback (
@@ -190,8 +194,86 @@ class MonthFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // 해당 위치의 데이터 삭제
-                rvAdapter.removeData(viewHolder.layoutPosition)
-                rvAdapter.delete(viewHolder.layoutPosition)
+                if(auth.currentUser != null) {
+                    rvAdapter.removeData(viewHolder.layoutPosition)
+                    rvAdapter.delete(viewHolder.layoutPosition)
+                }
+            }
+
+            // 꾹 눌러 이동할 수 없도록 함
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val itemView = viewHolder.itemView
+                    val itemHeight = itemView.height
+
+                    val textPadding = 40f // 텍스트 패딩 값
+
+                    if (dX < 0) {   // 스와이프를 왼쪽으로 할 수록 -dX
+
+                        // Draw the background
+                        val backgroundPaint = Paint()
+                        backgroundPaint.color = Color.parseColor("#CF6262")
+                        val backgroundLeft = itemView.right + dX.toInt()
+                        val backgroundTop = itemView.top
+                        val backgroundRight = itemView.right
+                        val backgroundBottom = itemView.bottom
+                        c.drawRect(backgroundLeft.toFloat(), backgroundTop.toFloat(), backgroundRight.toFloat(), backgroundBottom.toFloat(), backgroundPaint)
+
+                        // Draw the text
+                        val text = "삭제"
+                        val textPaint = Paint()
+                        textPaint.color = Color.WHITE
+                        textPaint.textSize = 52f
+                        val textWidth = textPaint.measureText(text)
+                        val textX = (itemView.right - textWidth - 40)
+//                        val textX = dX + textPadding
+                        val textY = (itemView.top + itemHeight / 2 + textPaint.textSize / 2 - 8).toFloat()
+                        c.drawText(text, textX, textY, textPaint)
+
+                    }
+                }
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+        }
+
+        // 체크 리스트 삭제
+        val itemCallback2 = object : ItemTouchHelper.SimpleCallback (
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
+        ){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // 해당 위치의 데이터 삭제
+                if(auth.currentUser != null) {
+                    cAdapter.removeData(viewHolder.layoutPosition)
+                    cAdapter.delete(viewHolder.layoutPosition)
+                }
             }
 
             // 꾹 눌러 이동할 수 없도록 함
@@ -251,6 +333,7 @@ class MonthFragment : Fragment() {
         }
         // 리사이클러뷰에 ItemTouchHelper 적용
         ItemTouchHelper(itemCallback).attachToRecyclerView(recyclerView)
+        ItemTouchHelper(itemCallback2).attachToRecyclerView(cRecyclerView)
 
         return view
     }
@@ -293,7 +376,6 @@ class MonthFragment : Fragment() {
 
     private fun setListDB() { // 체크리스트 DB 가져와서 저장
         val currentUser = auth.currentUser
-        val cRecyclerView = binding.checklistContainer
         if (currentUser != null) {  // 로그인 되어있는 경우
 
             var docRef = db.collection("users").document(currentUser.email!!)
@@ -326,6 +408,7 @@ class MonthFragment : Fragment() {
     }
 
     fun dotDecorator() {
+
         val docRef = db.collection("users").document(auth.currentUser!!.email!!)
             .collection("schedule")
         CoroutineScope(Dispatchers.IO).launch {
