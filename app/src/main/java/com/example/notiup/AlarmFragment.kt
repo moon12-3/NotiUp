@@ -1,7 +1,6 @@
 package com.example.notiup
 
 import android.content.*
-import android.content.Intent.getIntent
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
@@ -39,8 +38,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -88,7 +85,12 @@ class AlarmFragment : Fragment() {
                     Log.d("mytag", "현재 날짜 : $todayText, 현재 시간 : $nowText")
                     val savedType = sharedPreferences.getString("type", "all")
                     val savedType2 = sharedPreferences.getString("type2", "time_asc")
-                    setDB2(savedType!!, savedType2!!)
+                    if(auth.currentUser != null) {
+                        setDB2(savedType!!, savedType2!!)
+                    } else {
+                        setDB(savedType!!, savedType2!!)
+                    }
+
                 }
             }
         }
@@ -162,9 +164,6 @@ class AlarmFragment : Fragment() {
         recyclerView = view.findViewById(R.id.rv_alarm)
 
         receivedBundle = arguments
-
-        val type = receivedBundle?.getInt("type", 0) ?: 0
-        val type2 = receivedBundle?.getInt("type2", 0) ?: 0
 
         // 로그인 했는지 관련
         if(auth.currentUser != null) { // 로그인 했을 시
@@ -266,14 +265,20 @@ class AlarmFragment : Fragment() {
             }
         }
 
-        sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer { alarms ->
-            // rvAdapter2 초기화
-            rvAdapter2 = AlarmAdapter2(alarms)
+        val view = getView()
+        if (view != null) {
+            sortedAlarms.observe(viewLifecycleOwner, androidx.lifecycle.Observer { alarms ->
+                // rvAdapter2 초기화
+                rvAdapter2 = AlarmAdapter2(alarms)
 
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = rvAdapter2
-            recyclerView.setHasFixedSize(true)
-        })
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = rvAdapter2
+                recyclerView.setHasFixedSize(true)
+            })
+        }
+
+
+
     }
 
     private fun setDB2(sortType: String, sortType2: String) {
