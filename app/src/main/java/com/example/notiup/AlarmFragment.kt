@@ -111,7 +111,7 @@ class AlarmFragment : Fragment() {
         alarmDao = roomDb.alarmDao()
         val currentUser = auth.currentUser
 
-        if(auth.currentUser!! != null) {    // 로그인 시
+        if(auth.currentUser != null) {    // 로그인 시
             currentUser?.let {
                 val docRef = rDb.child("users").child(currentUser.uid)
                 docRef.get()
