@@ -69,7 +69,7 @@ class MonthFragment : Fragment() {
         mainActivity = context as MainActivity
     }
 
-    var today = SimpleDateFormat("yyyy-M-d")
+    var today = SimpleDateFormat("yyyy-MM-dd")
     var now = SimpleDateFormat("HH : mm")
     var todayText: String = today.format(Date())
     var nowText: String = now.format(Date())
@@ -81,7 +81,7 @@ class MonthFragment : Fragment() {
         mBR = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context, intent: Intent) {
                 if (intent.action?.compareTo(Intent.ACTION_TIME_TICK) == 0) {
-                    today = SimpleDateFormat("yyyy-M-d")
+                    today = SimpleDateFormat("yyyy-MM-dd")
                     now = SimpleDateFormat("HH : mm")
                     todayText = today.format(Date())
                     nowText = now.format(Date())
@@ -115,8 +115,12 @@ class MonthFragment : Fragment() {
         // 현재 날짜
         var year = binding.materialCalendar.selectedDate!!.year
         var month = binding.materialCalendar.selectedDate!!.month + 1
+        var monthText = month.toString()
+        if(monthText.length==1) monthText = "0${monthText}"
         var day = binding.materialCalendar.selectedDate!!.day
-        selectedDate = "$year-$month-$day"
+        var dayText = day.toString()
+        if(dayText.length==1) dayText = "0${dayText}"
+        selectedDate = "$year-$monthText-$dayText"
         binding.calHeader.text = "${year}년 ${month}월"
 
         //recyclerView 내용 (알람)
@@ -142,8 +146,12 @@ class MonthFragment : Fragment() {
         binding.materialCalendar.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
+            var monthText = month.toString()
+            if(monthText.length==1) monthText = "0${monthText}"
             var day = date.day
-            selectedDate = "$year-$month-$day"
+            var dayText = day.toString()
+            if(dayText.length==1) dayText = "0${dayText}"
+            selectedDate = "$year-$monthText-$dayText"
             Log.d("mytag", selectedDate)
 
             setDB()

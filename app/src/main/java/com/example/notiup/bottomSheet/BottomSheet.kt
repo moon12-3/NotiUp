@@ -32,6 +32,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
 
@@ -66,7 +67,7 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             selectedDate = bundle.getString("bundleKey")!!
             Log.d("test", "선택된 날짜 : " + selectedDate)
 
-            val date = selectedDate.split("-")
+            val date = selectedDate.split("-").toMutableList()
 
             val day = "${date[0]}. ${date[1]}. ${date[2]}."
 
@@ -85,15 +86,15 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Get the BottomSheetBehavior from the view
-        val behavior = BottomSheetBehavior.from(view.parent as View)
-
-        // Disable dragging behavior
-        behavior.isDraggable = false
-
-        behavior.peekHeight = 800
-
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//        // Get the BottomSheetBehavior from the view
+//        val behavior = BottomSheetBehavior.from(view.parent as View)
+//
+//        // Disable dragging behavior
+//        behavior.isDraggable = false
+//
+//        behavior.peekHeight = 800
+//
+//        behavior.state = BottomSheetBehavior.STATE_EXPANDED
         // Disable peek height
     }
 
@@ -113,10 +114,12 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
         sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         db = Firebase.firestore
 
-        val year = LocalDate.now().year.toString()
-        val month = LocalDate.now().monthValue.toString()
-        val day = LocalDate.now().dayOfMonth.toString()
-        selectedDate = "$year-$month-$day"
+//        val year = LocalDate.now().year.toString()
+//        var month = LocalDate.now().monthValue.toString()
+//        if(month.length==1) month = "0${month}"
+//        var day = LocalDate.now().dayOfMonth.toString()
+//        if(day.length==1) day = "0${day}"
+//        selectedDate = "$year-$month-$day"
 
         setSetting() // 날짜 및 시간 visible 변경 관련 설정
 
@@ -132,10 +135,14 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
         binding.startCal.setOnDateChangedListener { _, date, _ ->
             var year = date.year
             var month = date.month + 1
+            var monthText = month.toString()
+            if(monthText.length==1) monthText = "0${monthText}"
             var day = date.day
-            selectedDate = "$year-$month-$day"
+            var dayText = day.toString()
+            if(dayText.length==1) dayText = "0${dayText}"
+            selectedDate = "$year-$monthText-$dayText"
 
-            val eday = "$year. $month. $day."
+            val eday = "$year. $monthText. $dayText."
 
             binding.startDay.text = eday
         }
@@ -218,13 +225,18 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
             } else { // 로그인 시
                 uploadAlarm()
             }
-            if(binding.lockscreen.isChecked) {
-                addAlarm(0)
-                if(binding.banner.isChecked) addAlarm(2)
-                else if(binding.noticenter.isChecked) addAlarm(1)
-            } else {
-                if(binding.banner.isChecked) addAlarm(2)
-                else if(binding.noticenter.isChecked) addAlarm(1)
+            val today = SimpleDateFormat("yyyy-MM-dd")
+            val todayText = today.format(Date())
+
+            if(selectedDate>=todayText) {
+                if (binding.lockscreen.isChecked) {
+                    addAlarm(0)
+                    if (binding.banner.isChecked) addAlarm(2)
+                    else if (binding.noticenter.isChecked) addAlarm(1)
+                } else {
+                    if (binding.banner.isChecked) addAlarm(2)
+                    else if (binding.noticenter.isChecked) addAlarm(1)
+                }
             }
 
             dismiss()
@@ -327,28 +339,22 @@ class BottomSheet(context : Context, fNumber : Int) : BottomSheetDialogFragment(
         var hour = changeHour(binding.startTimepicker.hour.toString())
         var minute = changeMinute(binding.startTimepicker.minute.toString())
 
-        if(currentUser != null) {
-            val schedule = ScheduleModel(
-                binding.etTitle.text.toString(),
-                binding.etMemo.text.toString(),
-                selectedDate,
-                "$hour : $minute",
-                selectedDate+"$hour : $minute"
-            )
+        val schedule = ScheduleModel(
+            binding.etTitle.text.toString(),
+            binding.etMemo.text.toString(),
+            selectedDate,
+            "$hour : $minute",
+            selectedDate+"$hour : $minute"
+        )
 
-            db.collection("users").document(currentUser.email!!)
-                .collection("schedule").add(schedule)
-                .addOnSuccessListener {
-                    Log.d("mytag", "DocumentSnapshot successfully written!")
-                    Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-                .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
-        } else {
-            Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
-
+        db.collection("users").document(currentUser!!.email!!)
+            .collection("schedule").add(schedule)
+            .addOnSuccessListener {
+                Log.d("mytag", "DocumentSnapshot successfully written!")
+                Toast.makeText(mainActivity, "알람을 추가하였습니다.", Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
+            .addOnFailureListener { e -> Log.w("mytag", "Error writing document", e) }
     }
 
     private fun uploadAlarm2() {    // 로그인 X시 DB에 올리는 코드

@@ -66,7 +66,7 @@ class AlarmFragment : Fragment() {
         rDb = Firebase.database.reference
     }
 
-    var today = SimpleDateFormat("yyyy-M-d")
+    var today = SimpleDateFormat("yyyy-MM-dd")
     var now = SimpleDateFormat("HH : mm")
     var todayText: String = today.format(Date())
     var nowText: String = now.format(Date())
@@ -78,7 +78,7 @@ class AlarmFragment : Fragment() {
         mBR = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context, intent: Intent) {
                 if (intent.action?.compareTo(Intent.ACTION_TIME_TICK) == 0) {
-                    today = SimpleDateFormat("yyyy-M-d")
+                    today = SimpleDateFormat("yyyy-MM-dd")
                     now = SimpleDateFormat("HH : mm")
                     todayText = today.format(Date())
                     nowText = now.format(Date())
@@ -248,7 +248,7 @@ class AlarmFragment : Fragment() {
 
     // DB에서 추가한 알람 불러오는 함수
     fun setDB(sortType: String, sortType2: String) {
-        val today = SimpleDateFormat("yyyy-M-dd", Locale.getDefault()).format(Date())
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val sortedAlarms: LiveData<MutableList<Alarm>>
 
         if (sortType == "today") {  // 오늘 알람
@@ -296,13 +296,13 @@ class AlarmFragment : Fragment() {
                 val idList = mutableListOf<String>()
                 for (document in result) {
                     val schedule = document.toObject<ScheduleModel>()
-                    if(schedule.sDate>todayText || (schedule.sTime>nowText && schedule.sDate==todayText)) {
+                    // if(schedule.sDate>todayText || (schedule.sTime>nowText && schedule.sDate==todayText)) {
                         if(sortType!="today" || todayText==schedule.sDate) {
                             scheduleList.add(schedule)
                             idList.add(document.id)
                             Log.d("mytag", "${document.id} => ${document.data}")
                         }
-                    }
+                    //}
                 }
 
                 rvAdapter = AlarmAdapter(scheduleList, idList)

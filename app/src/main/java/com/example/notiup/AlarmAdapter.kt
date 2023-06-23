@@ -11,15 +11,25 @@ import com.example.notiup.viewModel.ScheduleModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AlarmAdapter(val dataList: MutableList<ScheduleModel>, val idList : MutableList<String>) : RecyclerView.Adapter<AlarmAdapter.ViewHolder>() {
+
+    val today = SimpleDateFormat("yyyy-MM-dd")
+    val todayText = today.format(Date())
+    val now = SimpleDateFormat("HH : mm")
+    val nowText = now.format(Date())
 
     inner class ViewHolder(private val binding : ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : ScheduleModel) {
             binding.tvTime.text = schedule.sTime
             binding.tvAlarmText.text = schedule.aMemo
             binding.tvDate.text = schedule.sDate
+            if(schedule.sDate<todayText || (schedule.sDate==todayText && schedule.sTime<=nowText))
+                binding.alarmSwitch.isChecked = false
         }
     }
 
